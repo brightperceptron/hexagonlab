@@ -112,12 +112,15 @@
             color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px;
             cursor: pointer; font-family: inherit; font-weight: 500;
             transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
         }
         .gemini-button:hover:not(:disabled) {
             transform: scale(1.05);
             box-shadow: 0 4px 15px rgba(143, 148, 251, 0.4);
         }
-        .gemini-button:disabled { background: var(--hover-grey); cursor: not-allowed; }
+        .gemini-button:disabled { background: var(--hover-grey); cursor: not-allowed; opacity: 0.6; }
         .form-group { display: flex; align-items: center; gap: 0.5rem; }
         #lang-select {
             background-color: var(--hover-grey); color: var(--primary-text);
@@ -129,6 +132,7 @@
             background-color: var(--background-dark);
             border-radius: 8px; padding: 1.5rem; color: var(--secondary-text);
             border-left: 4px solid var(--gemini-purple); display: none;
+            white-space: pre-wrap; /* Allows line breaks from AI to render */
         }
         .ai-output-title { font-weight: 700; color: var(--gemini-purple); margin-bottom: 1rem; }
         
@@ -139,20 +143,32 @@
         @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
         /* --- Playlist --- */
-        .playlist-container h2 { font-size: 1.8rem; margin-bottom: 1rem; }
+        .playlist-container {
+             background-color: var(--surface-grey);
+             padding: 1.5rem;
+             border-radius: 12px;
+        }
+        .playlist-container h2 { font-size: 1.8rem; margin-bottom: 1rem; border-bottom: 2px solid var(--hover-grey); padding-bottom: 0.5rem;}
+        .playlist {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            max-height: 80vh;
+            overflow-y: auto;
+        }
         .playlist-item {
-            display: flex; align-items: center; padding: 0.75rem; background-color: var(--surface-grey);
+            display: flex; align-items: center; padding: 0.75rem; background-color: var(--background-dark);
             border-radius: 8px; cursor: pointer; transition: all 0.3s ease;
             border-left: 4px solid transparent; gap: 1rem;
         }
         .playlist-item:hover { background-color: var(--hover-grey); transform: translateX(5px); }
         .playlist-item.active { background-color: var(--hover-grey); border-left-color: var(--accent-green); }
-        .playlist-item-thumbnail { width: 80px; height: 45px; object-fit: cover; border-radius: 4px; }
+        .playlist-item-thumbnail { width: 80px; height: 45px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
         .playlist-item-info h3 { font-size: 1rem; font-weight: 500; }
 
         @media (min-width: 992px) {
             .container { flex-direction: row; }
-            header h1 { font-size: 3rem; }
+            header h1 { font-size: 2.5rem; }
         }
     </style>
 </head>
@@ -272,7 +288,7 @@
 
         // --- 2. DATA ---
         const videoPlaylist = [
-            { id: 'NjtvFqeCoXE', title: 'Ei Mon Manob Kolyan | মানব কল্যাণ | আবুল ফজল | HSC AudioBook | Digital Radio Bangla | Bangla Academic HSC Dilam', channel: '  Digital Radio Bangla' },
+            { id: 'NjtvFqeCoXE', title: 'Manob Kolyan | মানব কল্যাণ | আবুল ফজল | HSC AudioBook | Digital Radio Bangla | Bangla Academic HSC Dilam', channel: 'Digital Radio Bangla' },
             { id: '_pg9dzPjTPQ', title: 'Aparichita | অপরিচিতা | Rabi Tagore| রবীন্দ্রনাথ ঠাকুর | HSC | HSC AudioBook | Digital Radio Bangla', channel: 'Digital Radio Bangla' },
             { id: '1b2A2srXNTk', title: 'Necklace | নেকলেস । গী দ্য মোপাসাঁ । HSC | Audiobook | Digital Radio Bangla | পূর্ণেন্দু দস্তিদার', channel: 'Digital Radio Bangla' },
             { id: 'TAyR0VA-jcI', title: 'Manob Kolyan | মানব কল্যাণ | আবুল ফজল | HSC | Audiobook | Digital Radio Bangla | Bangla Academic HSC', channel: 'Digital Radio Bangla' },
@@ -284,7 +300,7 @@
         let currentVideoIndex = 0;
 
         // --- 3. GEMINI API INTEGRATION ---
-        const apiKey = "AIzaSyCqDwu5H5f1PjfYbq00B2b23m2P0zVK8vM";
+        const apiKey = "AIzaSyCqDwu5H5f1PjfYbq00B2b23m2P0zVK8vM"; // IMPORTANT: API key is handled by the execution environment.
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
         
         async function callGeminiAPI(prompt, button) {
@@ -311,6 +327,7 @@
                 if (candidate?.content?.parts?.[0]?.text) {
                     return candidate.content.parts[0].text.replace(/\n/g, '<br>');
                 } else {
+                    console.error("Invalid response structure from API:", result);
                     return langStrings[currentLang].error;
                 }
             } catch (error) {
@@ -324,6 +341,12 @@
         }
         
         async function handleAIAction(action) {
+            if (!player || typeof player.getPlayerState !== 'function' || player.getPlayerState() !== 1) {
+                // If no video is playing, don't call the API
+                alert(currentLang === 'en' ? 'Please play a video first!' : 'অনুগ্রহ করে প্রথমে একটি ভিডিও চালান!');
+                return;
+            }
+
             const video = videoPlaylist[currentVideoIndex];
             const aiLang = document.getElementById('lang-select').value;
             const outputContainer = document.getElementById('ai-output-container');
@@ -358,7 +381,7 @@
         // --- 4. YOUTUBE API & PLAYER LOGIC ---
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '390', width: '640', videoId: videoPlaylist[0].id,
+                height: '390', width: '640',
                 playerVars: { 'playsinline': 1, 'rel': 0 },
                 events: { 'onReady': onPlayerReady }
             });
@@ -368,8 +391,7 @@
             setupEventListeners();
             updateUI(currentLang); // Initial UI setup
             buildPlaylist();
-            updateNowPlaying(currentVideoIndex);
-            updateActivePlaylistItem(currentVideoIndex);
+            updateActivePlaylistItem(currentVideoIndex); // Set initial active item
             loadNote();
         }
 
@@ -387,25 +409,6 @@
             document.getElementById('note-textarea').addEventListener('input', saveNote);
         }
 
-        function buildPlaylist() { /* ... Unchanged from previous version ... */ }
-        function loadVideo(index) { /* ... Unchanged from previous version ... */ }
-        function updateNowPlaying(index) { /* ... Unchanged from previous version ... */ }
-        function updateActivePlaylistItem(activeIndex) { /* ... Unchanged from previous version ... */ }
-
-        // --- 6. STICKY NOTES LOGIC (localStorage) ---
-        function saveNote() {
-            const videoId = videoPlaylist[currentVideoIndex].id;
-            const noteText = document.getElementById('note-textarea').value;
-            localStorage.setItem(`note_${videoId}`, noteText);
-        }
-
-        function loadNote() {
-            const videoId = videoPlaylist[currentVideoIndex].id;
-            const savedNote = localStorage.getItem(`note_${videoId}`) || '';
-            document.getElementById('note-textarea').value = savedNote;
-        }
-
-        // Re-using functions from previous version, adapted for this file
         function buildPlaylist() {
             const playlistContainer = document.getElementById('playlist');
             playlistContainer.innerHTML = ''; // Clear previous playlist
@@ -443,7 +446,7 @@
             updateActivePlaylistItem(index);
             loadNote(); // Load the note for the new video
 
-            document.getElementById('ai-output-container').style.displFay = 'none'; // Hide AI output
+            document.getElementById('ai-output-container').style.display = 'none'; // Hide AI output
         }
 
         function updateNowPlaying(index) {
@@ -457,7 +460,22 @@
                 item.classList.toggle('active', index === activeIndex);
             });
         }
+
+        // --- 6. STICKY NOTES LOGIC (localStorage) ---
+        function saveNote() {
+            const videoId = videoPlaylist[currentVideoIndex].id;
+            const noteText = document.getElementById('note-textarea').value;
+            localStorage.setItem(`note_${videoId}`, noteText);
+        }
+
+        function loadNote() {
+            // Don't try to load a note if no video is selected yet.
+            if (currentVideoIndex < 0 || currentVideoIndex >= videoPlaylist.length) return;
+            
+            const videoId = videoPlaylist[currentVideoIndex].id;
+            const savedNote = localStorage.getItem(`note_${videoId}`) || '';
+            document.getElementById('note-textarea').value = savedNote;
+        }
     </script>
 </body>
 </html>
-
