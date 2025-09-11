@@ -3,49 +3,46 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Digital Radio Bangla - AI Learning Mode</title>
-    <!-- Google Fonts: Hind Siliguri (for Bengali) & Poppins (for English) -->
+    <title>Bengali Music Showcase</title>
+    
+    <!-- Google Fonts: Poppins (for English) & Hind Siliguri (for Bengali) -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@400;500;700&family=Poppins:wght@400;500;700&display=swap" rel="stylesheet">
-    <!-- Icon Library -->
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Hind+Siliguri:wght@400;500;700&display=swap" rel="stylesheet">
+    <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
 
     <style>
         :root {
             --background-dark: #121212;
             --surface-grey: #1e1e1e;
-            --primary-text: #f1f1f1;
+            --primary-text: #ffffff;
             --secondary-text: #b3b3b3;
-            --accent-green: #00875f;
-            --hover-grey: #2f2f2f;
+            --accent-green: #1DB954;
+            --hover-grey: #2a2a2a;
             --gemini-purple: #8f94fb;
-            --base-font-size: 1.1rem;
         }
 
         * { margin: 0; padding: 0; box-sizing: border-box; }
-        html { scroll-behavior: smooth; }
 
         body {
             background-color: var(--background-dark);
             color: var(--primary-text);
             font-family: 'Poppins', 'Hind Siliguri', sans-serif;
-            line-height: 1.7;
-            overflow-x: hidden;
+            line-height: 1.6;
         }
 
         header {
             padding: 1rem 1.5rem;
             background-color: var(--surface-grey);
-            border-bottom: 2px solid var(--accent-green);
+            border-bottom: 3px solid var(--accent-green);
             display: flex;
             justify-content: space-between;
             align-items: center;
         }
         
-        #app-title { font-size: 1.5rem; font-weight: 700; }
+        #app-title { font-size: 1.75rem; font-weight: 700; }
 
-        /* Language Switcher */
         .language-switcher {
             display: flex;
             background-color: var(--hover-grey);
@@ -53,46 +50,34 @@
             overflow: hidden;
         }
         .lang-btn {
-            background: none;
-            border: none;
-            color: var(--secondary-text);
-            padding: 0.5rem 1rem;
-            cursor: pointer;
-            font-family: inherit;
+            background: none; border: none; color: var(--secondary-text);
+            padding: 0.5rem 1rem; cursor: pointer; font-family: inherit;
             transition: all 0.3s ease;
         }
-        .lang-btn.active {
-            background-color: var(--accent-green);
-            color: white;
-        }
+        .lang-btn.active { background-color: var(--accent-green); color: white; }
         
         .container {
-            display: grid;
-            grid-template-areas: "content" "playlist";
-            grid-template-columns: 1fr;
-            padding: 1.5rem;
-            gap: 1.5rem;
-            max-width: 1500px;
-            margin: 0 auto;
+            display: flex; flex-direction: column; padding: 2rem 1rem;
+            max-width: 1400px; margin: 0 auto; gap: 2rem;
         }
 
-        .content-wrapper { grid-area: content; }
-        .playlist-section { grid-area: playlist; }
+        .main-content { flex: 3; }
+        .playlist-container { flex: 1; }
 
-        /* --- Player Section --- */
-        #player-wrapper {
-            position: relative;
-            width: 100%;
-            padding-top: 56.25%;
-            background-color: #000;
-            border-radius: 12px;
-            overflow: hidden;
+        .video-player-wrapper {
+            position: relative; width: 100%; padding-top: 56.25%; 
+            background-color: #000; border-radius: 12px; overflow: hidden;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
         }
-        #player-wrapper iframe { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-        #now-playing { padding: 1rem 0.5rem; }
-        
-        /* --- Interactive Panel --- */
-        .interactive-panel { background-color: var(--surface-grey); border-radius: 12px; overflow: hidden; margin-top: 1rem; }
+
+        #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
+
+        .now-playing-info { margin-top: 1rem; padding: 0.5rem; }
+        #video-title { font-size: 1.5rem; font-weight: 500; }
+        #video-channel { font-size: 1rem; color: var(--secondary-text); }
+
+        /* --- Tabs for Notes --- */
+        .interactive-panel { background-color: var(--surface-grey); border-radius: 12px; margin-top: 1.5rem; overflow: hidden; }
         .tabs { display: flex; background-color: var(--hover-grey); }
         .tab-button {
             flex: 1; padding: 0.8rem; background: none; border: none;
@@ -100,27 +85,27 @@
             cursor: pointer; transition: all 0.2s ease; border-bottom: 3px solid transparent;
         }
         .tab-button.active { color: var(--primary-text); border-bottom-color: var(--accent-green); }
-        .tab-content { padding: 1rem 1.5rem; }
-
-        #lyrics-container { height: 40vh; overflow-y: auto; font-size: var(--base-font-size); }
-        .lyric-line { padding: 0.5rem 0; opacity: 0.6; transition: all 0.3s ease; }
-        .lyric-line.active { opacity: 1; color: var(--accent-green); font-weight: 700; }
-        
+        .tab-content { padding: 1rem; }
         #note-textarea {
-            width: 100%; height: 38vh; background-color: var(--background-dark);
+            width: 100%; height: 200px; background-color: var(--background-dark);
             border: 1px solid var(--hover-grey); border-radius: 8px; color: var(--primary-text);
-            font-family: inherit; font-size: 1rem; padding: 0.8rem; resize: none;
+            font-family: inherit; font-size: 1rem; padding: 0.8rem; resize: vertical;
         }
 
-        /* --- Tools & AI Sections --- */
-        .tools-section {
-            display: flex;
-            flex-direction: column;
-            gap: 1rem;
-            margin-bottom: 1rem;
+        /* --- AI Features --- */
+        .ai-tools-panel {
+            margin-top: 1.5rem;
+            background-color: var(--surface-grey);
+            border-radius: 12px;
+            padding: 1.5rem;
         }
-        .tool-row { display: flex; justify-content: space-between; align-items: center; flex-wrap: wrap; gap: 1rem; }
-        
+        .ai-controls {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            flex-wrap: wrap;
+            gap: 1rem;
+        }
         .gemini-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
         .gemini-button {
             background: linear-gradient(45deg, #4e54c8, var(--gemini-purple));
@@ -128,44 +113,46 @@
             cursor: pointer; font-family: inherit; font-weight: 500;
             transition: all 0.3s ease;
         }
-        .gemini-button:hover:not(:disabled) { transform: scale(1.05); box-shadow: 0 4px 15px rgba(143, 148, 251, 0.4); }
+        .gemini-button:hover:not(:disabled) {
+            transform: scale(1.05);
+            box-shadow: 0 4px 15px rgba(143, 148, 251, 0.4);
+        }
         .gemini-button:disabled { background: var(--hover-grey); cursor: not-allowed; }
-
         .form-group { display: flex; align-items: center; gap: 0.5rem; }
         #lang-select {
             background-color: var(--hover-grey); color: var(--primary-text);
             border: 1px solid var(--secondary-text); border-radius: 5px; padding: 0.4rem;
         }
-        
+
         #ai-output-container {
-            background: var(--background-dark); border-radius: 8px;
-            padding: 1.5rem; margin-top: 1rem;
-            border-left: 3px solid var(--gemini-purple);
-            max-height: 40vh;
-            overflow-y: auto;
+            margin-top: 1.5rem;
+            background-color: var(--background-dark);
+            border-radius: 8px; padding: 1.5rem; color: var(--secondary-text);
+            border-left: 4px solid var(--gemini-purple); display: none;
         }
         .ai-output-title { font-weight: 700; color: var(--gemini-purple); margin-bottom: 1rem; }
-
-        /* --- Playlist Section --- */
-        .playlist-item {
-            display: flex; align-items: center; gap: 1rem; padding: 0.75rem;
-            background-color: var(--surface-grey); border-radius: 6px; cursor: pointer;
-            transition: all 0.2s ease; border-left: 4px solid transparent;
-        }
-        .playlist-item:hover { background-color: var(--hover-grey); }
-        .playlist-item.active { background-color: #2a3a34; border-left-color: var(--accent-green); }
-
-        /* Loader Animation */
+        
         .loader {
             width: 18px; height: 18px; border: 2px solid #FFF; border-bottom-color: transparent;
-            border-radius: 50%; display: inline-block; box-sizing: border-box;
-            animation: rotation 1s linear infinite; margin-left: 8px;
+            border-radius: 50%; display: inline-block; animation: spin 1s linear infinite; margin-left: 8px;
         }
-        @keyframes rotation { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
+
+        /* --- Playlist --- */
+        .playlist-container h2 { font-size: 1.8rem; margin-bottom: 1rem; }
+        .playlist-item {
+            display: flex; align-items: center; padding: 0.75rem; background-color: var(--surface-grey);
+            border-radius: 8px; cursor: pointer; transition: all 0.3s ease;
+            border-left: 4px solid transparent; gap: 1rem;
+        }
+        .playlist-item:hover { background-color: var(--hover-grey); transform: translateX(5px); }
+        .playlist-item.active { background-color: var(--hover-grey); border-left-color: var(--accent-green); }
+        .playlist-item-thumbnail { width: 80px; height: 45px; object-fit: cover; border-radius: 4px; }
+        .playlist-item-info h3 { font-size: 1rem; font-weight: 500; }
 
         @media (min-width: 992px) {
-            .container { grid-template-areas: "content playlist"; grid-template-columns: 2fr 1fr; }
-            .playlist-section { max-height: 90vh; overflow-y: auto; }
+            .container { flex-direction: row; }
+            header h1 { font-size: 3rem; }
         }
     </style>
 </head>
@@ -179,70 +166,56 @@
     </header>
 
     <main class="container">
-        <div class="content-wrapper">
-            <section class="main-player">
-                <div id="player-wrapper"><div id="player"></div></div>
-                <div id="now-playing">
-                    <h2 id="video-title"></h2><p id="video-channel"></p>
-                </div>
-            </section>
+        <section class="main-content">
+            <div class="video-player-wrapper"><div id="player"></div></div>
+            <div class="now-playing-info">
+                <h2 id="video-title"></h2><p id="video-channel"></p>
+            </div>
 
-            <section class="interactive-panel">
+            <div class="interactive-panel">
                 <div class="tabs">
-                    <button id="lyrics-tab-btn" class="tab-button active"></button>
-                    <button id="notes-tab-btn" class="tab-button"></button>
+                    <button id="notes-tab-btn" class="tab-button active"></button>
                 </div>
-
-                <div id="lyrics-content" class="tab-content">
-                    <div id="lyrics-container"></div>
-                </div>
-
-                <div id="notes-content" class="tab-content" style="display: none;">
+                <div id="notes-content" class="tab-content">
                     <textarea id="note-textarea"></textarea>
                 </div>
-            </section>
+            </div>
 
-            <section class="ai-tools-panel">
-                <div class="tools-section">
-                    <div class="tool-row">
-                        <div class="gemini-actions">
-                            <button class="gemini-button" id="summarize-btn"></button>
-                            <button class="gemini-button" id="quiz-btn"></button>
-                            <button class="gemini-button" id="knowledge-btn"></button>
-                        </div>
-                        <div class="form-group">
-                            <label for="lang-select" id="lang-select-label"></label>
-                            <select id="lang-select">
-                                <option value="English">English</option>
-                                <option value="Bengali">Bengali</option>
-                                <option value="Hindi">Hindi</option>
-                                <option value="Arabic">Arabic</option>
-                            </select>
-                        </div>
+            <div class="ai-tools-panel">
+                <div class="ai-controls">
+                    <div class="gemini-actions">
+                        <button class="gemini-button" id="summarize-btn"></button>
+                        <button class="gemini-button" id="quiz-btn"></button>
+                        <button class="gemini-button" id="knowledge-btn"></button>
+                    </div>
+                    <div class="form-group">
+                        <label for="lang-select" id="lang-select-label"></label>
+                        <select id="lang-select">
+                            <option value="English">English</option>
+                            <option value="Bengali">Bengali</option>
+                        </select>
                     </div>
                 </div>
-                <div id="ai-output-container" style="display: none;"></div>
-            </section>
-        </div>
-
-        <section class="playlist-section">
-            <h3 id="playlist-title"></h3>
-            <div id="playlist"></div>
+                <div id="ai-output-container"></div>
+            </div>
         </section>
+
+        <aside class="playlist-container">
+            <h2 id="playlist-title"></h2>
+            <div id="playlist" class="playlist"></div>
+        </aside>
     </main>
     
     <script src="https://www.youtube.com/iframe_api"></script>
     <script>
-        // --- LANGUAGE & TEXT MANAGEMENT ---
+        // --- 1. LANGUAGE & TEXT MANAGEMENT ---
         const langStrings = {
             en: {
-                appTitle: "Digital Radio Bangla",
+                appTitle: "Bengali Music Showcase",
                 welcomeTitle: "Welcome!",
-                welcomeChannel: "Select a song from the playlist to begin.",
-                lyricsTab: "Lyrics",
-                notesTab: "My Notes",
-                lyricsUnavailable: "Lyrics for this song are not available yet.",
-                notesPlaceholder: "Write your thoughts about this song... Your notes are saved automatically.",
+                welcomeChannel: "Please select a song from the playlist.",
+                notesTab: "My Sticky Notes",
+                notesPlaceholder: "Write your thoughts about this song...",
                 playlistTitle: "Playlist",
                 summarizeBtn: "✨ Summarize",
                 quizBtn: "❓ Quiz Me",
@@ -254,14 +227,12 @@
                 error: "Sorry, an error occurred. Please try again."
             },
             bn: {
-                appTitle: "ডিজিটাল রেডিও বাংলা",
+                appTitle: "বাংলা গানের আসর",
                 welcomeTitle: "স্বাগতম!",
-                welcomeChannel: "শুরু করতে প্লেলিস্ট থেকে একটি গান নির্বাচন করুন।",
-                lyricsTab: "গানের কথা",
-                notesTab: "আমার নোট",
-                lyricsUnavailable: "এই গানের লিরিক্স এখনো পাওয়া যায়নি।",
-                notesPlaceholder: "এই গানটি সম্পর্কে আপনার ভাবনা লিখুন... আপনার নোট স্বয়ংক্রিয়ভাবে সংরক্ষিত হবে।",
-                playlistTitle: "প্লেলিস্ট",
+                welcomeChannel: "অনুগ্রহ করে প্লেলিস্ট থেকে একটি গান নির্বাচন করুন।",
+                notesTab: "আমার স্টিকি নোট",
+                notesPlaceholder: "এই গানটি সম্পর্কে আপনার ভাবনা লিখুন...",
+                playlistTitle: "গানের তালিকা",
                 summarizeBtn: "✨ সারসংক্ষেপ",
                 quizBtn: "❓ কুইজ",
                 knowledgeBtn: "📚 জ্ঞানভান্ডার",
@@ -278,13 +249,13 @@
         function updateUI(lang) {
             currentLang = lang;
             const s = langStrings[lang];
+            // Update all static text elements
             document.documentElement.lang = lang;
             document.getElementById('app-title').textContent = s.appTitle;
             if (!player || player.getPlayerState() !== 1) { // Only update if not playing
-                 document.getElementById('video-title').textContent = s.welcomeTitle;
-                 document.getElementById('video-channel').textContent = s.welcomeChannel;
+                document.getElementById('video-title').textContent = s.welcomeTitle;
+                document.getElementById('video-channel').textContent = s.welcomeChannel;
             }
-            document.getElementById('lyrics-tab-btn').textContent = s.lyricsTab;
             document.getElementById('notes-tab-btn').textContent = s.notesTab;
             document.getElementById('note-textarea').placeholder = s.notesPlaceholder;
             document.getElementById('playlist-title').textContent = s.playlistTitle;
@@ -293,210 +264,199 @@
             document.getElementById('knowledge-btn').innerHTML = s.knowledgeBtn;
             document.getElementById('lang-select-label').textContent = s.langSelectLabel;
             
+            // Update language switcher style
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.lang === lang);
             });
-            
-            buildLyrics(currentVideoIndex); // Re-build lyrics to show unavailable message in correct language
         }
 
-
-        // --- DATA (with LYRICS) ---
+        // --- 2. DATA ---
         const videoPlaylist = [
-            { id: 'NjtvFqeCoXE', title: 'Ei Mon Tomake Dilam', channel: 'Anupam Movie Songs',
-              lyrics: [
-                { time: 15.2, text: "এই মন তোমাকে দিলাম" }, { time: 19.8, text: "এই প্রেম তোমাকে দিলাম" },
-                { time: 24.8, text: "তুমি চোখের আড়াল হও" }, { time: 27.2, text: "কাছে কিবা দূরে রও" },
-                { time: 29.8, text: "মনে রেখো আমিও ছিলাম" }, { time: 34.2, text: "এই মন তোমাকে দিলাম" },
-                { time: 38.8, text: "এই প্রেম তোমাকে দিলাম" }, { time: 54.0, text: "বুকের মাঝে থাকো তুমি" },
-                { time: 58.8, text: "থাকো না স্মরণে" }, { time: 64.0, text: "আমারই থাকবে তুমি" },
-                { time: 68.8, text: "এ জীবনে মরণে" }, { time: 73.8, text: "তুমি চোখের আড়াল হও" },
-                { time: 76.2, text: "কাছে কিবা দূরে রও" }, { time: 78.8, text: "মনে রেখো আমিও ছিলাম" },
-                { time: 83.2, text: "এই মন তোমাকে দিলাম" }, { time: 87.8, text: "এই প্রেম তোমাকে দিলাম" },
-              ]
-            },
-            { id: '_pg9dzPjTPQ', title: 'Tumi Chader Jochona Nao', channel: 'Anupam Movie Songs', lyrics: null },
-            { id: '1b2A2srXNTk', title: 'Amar Jibone Tumi', channel: 'Anupam Movie Songs', lyrics: null },
-            { id: 'TAyR0VA-jcI', title: 'Ek Dike Prithibi', channel: 'James', lyrics: null },
-            { id: 'w0QdcL4HvLU', title: 'Bhalobashi E Kotha', channel: 'Anupam Movie Songs', lyrics: null },
-            { id: 'VEYzzU_flCg', title: 'Amar Sonar Moyna Pakhi', channel: 'Samina Chowdhury', lyrics: null }
+            { id: 'NjtvFqeCoXE', title: 'Ei Mon Tomake Dilam', channel: 'Anupam Movie Songs' },
+            { id: '_pg9dzPjTPQ', title: 'Tumi Chader Jochona Nao', channel: 'Anupam Movie Songs' },
+            { id: '1b2A2srXNTk', title: 'Amar Jibone Tumi', channel: 'Anupam Movie Songs' },
+            { id: 'TAyR0VA-jcI', title: 'Ek Dike Prithibi', channel: 'James' },
+            { id: 'w0QdcL4HvLU', title: 'Bhalobashi E Kotha', channel: 'Anupam Movie Songs' },
+            { id: 'VEYzzU_flCg', title: 'Amar Sonar Moyna Pakhi', channel: 'Samina Chowdhury' }
         ];
 
         let player;
         let currentVideoIndex = 0;
-        let lyricsSyncInterval;
 
-        // --- GEMINI API INTEGRATION ---
+        // --- 3. GEMINI API INTEGRATION ---
         const apiKey = "";
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
         
         async function callGeminiAPI(prompt, button) {
-            button.disabled = true;
-            const originalText = button.innerHTML;
+            const outputContainer = document.getElementById('ai-output-container');
+            const originalButtonText = button.innerHTML;
+            
+            // Disable all AI buttons and show loading state
+            document.querySelectorAll('.gemini-button').forEach(btn => btn.disabled = true);
             button.innerHTML += '<span class="loader"></span>';
-            document.querySelectorAll('.gemini-button').forEach(b => b.disabled = true);
+            outputContainer.style.display = 'block';
+            outputContainer.innerHTML = 'Generating...';
 
             const payload = { contents: [{ parts: [{ text: prompt }] }] };
-            let responseText = langStrings[currentLang].error;
-
+            
             try {
                 const response = await fetch(apiUrl, {
-                    method: 'POST',
-                    headers: { 'Content-Type': 'application/json' },
-                    body: JSON.stringify(payload)
+                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
                 });
-                if (!response.ok) throw new Error(`API error: ${response.status}`);
+                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                
                 const result = await response.json();
                 const candidate = result.candidates?.[0];
+
                 if (candidate?.content?.parts?.[0]?.text) {
-                    responseText = candidate.content.parts[0].text.replace(/\n/g, '<br>');
+                    return candidate.content.parts[0].text.replace(/\n/g, '<br>');
+                } else {
+                    return langStrings[currentLang].error;
                 }
             } catch (error) {
                 console.error("Gemini API call failed:", error);
+                return langStrings[currentLang].error;
             } finally {
-                button.innerHTML = originalText;
-                document.querySelectorAll('.gemini-button').forEach(b => b.disabled = false);
-                return responseText;
+                // Restore all buttons
+                document.querySelectorAll('.gemini-button').forEach(btn => btn.disabled = false);
+                button.innerHTML = originalButtonText;
             }
         }
-
-        function getLyricsText() {
-            const video = videoPlaylist[currentVideoIndex];
-            if (!video.lyrics) return null;
-            return video.lyrics.map(line => line.text).join('\n');
-        }
-
+        
         async function handleAIAction(action) {
-            const lyricsText = getLyricsText();
-            if (!lyricsText) {
-                alert(langStrings[currentLang].lyricsUnavailable);
-                return;
-            }
-
             const video = videoPlaylist[currentVideoIndex];
             const aiLang = document.getElementById('lang-select').value;
             const outputContainer = document.getElementById('ai-output-container');
             let prompt = '';
             let button;
             let titleKey = '';
+            
+            const baseInstruction = `You are a music and cultural expert. For the Bengali song titled "${video.title}", perform the following action and respond in ${aiLang}:`;
 
             switch(action) {
                 case 'summarize':
-                    prompt = `You are a music analyst. Summarize the theme and emotion of the following Bengali song lyrics in about 50-70 words. The song title is "${video.title}". Respond in ${aiLang}.\n\nLyrics:\n${lyricsText}`;
+                    prompt = `${baseInstruction} Provide a concise, one-paragraph summary of the song's main theme and emotional tone.`;
                     button = document.getElementById('summarize-btn');
                     titleKey = 'aiOutputTitleSummary';
                     break;
                 case 'quiz':
-                    prompt = `Create a short, multiple-choice quiz with 3 questions based on the content and themes of these Bengali song lyrics. Provide the correct answer for each question. The song title is "${video.title}". Respond in ${aiLang}.\n\nLyrics:\n${lyricsText}`;
+                    prompt = `${baseInstruction} Create a short, fun, multiple-choice quiz with 3 questions about the song's potential themes or lyrical content. Provide the correct answer for each question.`;
                     button = document.getElementById('quiz-btn');
                     titleKey = 'aiOutputTitleQuiz';
                     break;
                 case 'knowledge':
-                    prompt = `You are an expert on Bengali culture and music. Provide a detailed "Knowledge Base" entry for the song "${video.title}" based on its lyrics. Cover these topics in separate sections: 1) Core Theme & Meaning, 2) Poetic Devices or Imagery used, and 3) Potential Cultural Context. Respond in ${aiLang}.\n\nLyrics:\n${lyricsText}`;
+                    prompt = `${baseInstruction} Provide a detailed 'Knowledge Base' entry. Cover: 1) Core Theme & Meaning, 2) Potential Cultural Context, and 3) The mood or feeling the music evokes.`;
                     button = document.getElementById('knowledge-btn');
                     titleKey = 'aiOutputTitleKnowledge';
                     break;
             }
-            
-            outputContainer.style.display = 'block';
-            outputContainer.innerHTML = `<h4 class="ai-output-title">${langStrings[currentLang][titleKey]}</h4><div class="loader"></div>`;
-            
+
             const result = await callGeminiAPI(prompt, button);
-            outputContainer.innerHTML = `<h4 class="ai-output-title">${langStrings[currentLang][titleKey]}</h4><p>${result}</p>`;
+            outputContainer.innerHTML = `<h3 class="ai-output-title">${langStrings[currentLang][titleKey]}</h3><p>${result}</p>`;
         }
-
-
-        // --- YOUTUBE API & PLAYER LOGIC ---
+        
+        // --- 4. YOUTUBE API & PLAYER LOGIC ---
         function onYouTubeIframeAPIReady() {
             player = new YT.Player('player', {
-                height: '100%', width: '100%', videoId: videoPlaylist[0].id,
+                height: '390', width: '640', videoId: videoPlaylist[0].id,
                 playerVars: { 'playsinline': 1, 'rel': 0 },
-                events: { 'onReady': onPlayerReady, 'onStateChange': onPlayerStateChange }
+                events: { 'onReady': onPlayerReady }
             });
         }
 
-        function onPlayerReady() {
+        function onPlayerReady(event) {
             setupEventListeners();
-            loadVideo(0, false);
-            updateUI(currentLang);
-        }
-
-        function onPlayerStateChange(event) {
-            clearInterval(lyricsSyncInterval);
-            if (event.data == YT.PlayerState.PLAYING) {
-                lyricsSyncInterval = setInterval(syncLyrics, 200);
-            }
-        }
-        
-        function loadVideo(index, autoplay = true) {
-            currentVideoIndex = index;
-            const video = videoPlaylist[currentVideoIndex];
-            autoplay ? player.loadVideoById(video.id) : player.cueVideoById(video.id);
-            updateNowPlaying(index);
-            updateActivePlaylistItem(index);
-            buildLyrics(index);
+            updateUI(currentLang); // Initial UI setup
+            buildPlaylist();
+            updateNowPlaying(currentVideoIndex);
+            updateActivePlaylistItem(currentVideoIndex);
             loadNote();
-            document.getElementById('ai-output-container').style.display = 'none';
         }
 
-        // --- UI & INTERACTIVITY LOGIC ---
-        function buildPlaylist() {
-            document.getElementById('playlist').innerHTML = videoPlaylist.map((video, index) =>
-                `<div class="playlist-item" data-index="${index}"><p>${video.title}</p></div>`
-            ).join('');
-            document.querySelectorAll('.playlist-item').forEach(item => {
-                item.addEventListener('click', (e) => loadVideo(parseInt(e.currentTarget.dataset.index)));
-            });
-        }
-
-        function buildLyrics(index) {
-            const container = document.getElementById('lyrics-container');
-            const video = videoPlaylist[index];
-            if (video.lyrics) {
-                container.innerHTML = video.lyrics.map(line => `<p class="lyric-line">${line.text}</p>`).join('');
-            } else {
-                container.innerHTML = `<p class="lyric-line">${langStrings[currentLang].lyricsUnavailable}</p>`;
-            }
-        }
-        
-        function syncLyrics() { /* ... unchanged ... */ }
-
-        function showTab(tabName) {
-            document.getElementById('lyrics-content').style.display = tabName === 'lyrics' ? 'block' : 'none';
-            document.getElementById('notes-content').style.display = tabName === 'notes' ? 'block' : 'none';
-            document.querySelectorAll('.tab-button').forEach(btn => {
-                btn.classList.toggle('active', btn.id.includes(tabName));
-            });
-        }
-        
-        // --- EVENT LISTENERS ---
+        // --- 5. UI & INTERACTIVITY ---
         function setupEventListeners() {
+            // Language switchers
             document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', (e) => updateUI(e.target.dataset.lang)));
+            
+            // AI action buttons
             document.getElementById('summarize-btn').addEventListener('click', () => handleAIAction('summarize'));
             document.getElementById('quiz-btn').addEventListener('click', () => handleAIAction('quiz'));
             document.getElementById('knowledge-btn').addEventListener('click', () => handleAIAction('knowledge'));
-            document.getElementById('lyrics-tab-btn').addEventListener('click', () => showTab('lyrics'));
-            document.getElementById('notes-tab-btn').addEventListener('click', () => showTab('notes'));
+            
+            // Sticky note
             document.getElementById('note-textarea').addEventListener('input', saveNote);
         }
+
+        function buildPlaylist() { /* ... Unchanged from previous version ... */ }
+        function loadVideo(index) { /* ... Unchanged from previous version ... */ }
+        function updateNowPlaying(index) { /* ... Unchanged from previous version ... */ }
+        function updateActivePlaylistItem(activeIndex) { /* ... Unchanged from previous version ... */ }
+
+        // --- 6. STICKY NOTES LOGIC (localStorage) ---
+        function saveNote() {
+            const videoId = videoPlaylist[currentVideoIndex].id;
+            const noteText = document.getElementById('note-textarea').value;
+            localStorage.setItem(`note_${videoId}`, noteText);
+        }
+
+        function loadNote() {
+            const videoId = videoPlaylist[currentVideoIndex].id;
+            const savedNote = localStorage.getItem(`note_${videoId}`) || '';
+            document.getElementById('note-textarea').value = savedNote;
+        }
+
+        // Re-using functions from previous version, adapted for this file
+        function buildPlaylist() {
+            const playlistContainer = document.getElementById('playlist');
+            playlistContainer.innerHTML = ''; // Clear previous playlist
+            videoPlaylist.forEach((video, index) => {
+                const item = document.createElement('div');
+                item.className = 'playlist-item';
+                item.dataset.index = index;
+
+                const thumbnail = document.createElement('img');
+                thumbnail.className = 'playlist-item-thumbnail';
+                thumbnail.src = `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
+                thumbnail.alt = video.title;
+                
+                const info = document.createElement('div');
+                info.className = 'playlist-item-info';
+                
+                const title = document.createElement('h3');
+                title.textContent = video.title;
+
+                info.appendChild(title);
+                item.appendChild(thumbnail);
+                item.appendChild(info);
+                
+                item.addEventListener('click', () => { loadVideo(index); });
+                playlistContainer.appendChild(item);
+            });
+        }
         
-        // --- NOTES & OTHER HELPERS ---
-        function saveNote() { /* ... unchanged ... */ }
-        function loadNote() { /* ... unchanged ... */ }
+        function loadVideo(index) {
+            if (index < 0 || index >= videoPlaylist.length) return;
+            
+            currentVideoIndex = index;
+            player.loadVideoById(videoPlaylist[index].id);
+            updateNowPlaying(index);
+            updateActivePlaylistItem(index);
+            loadNote(); // Load the note for the new video
+
+            document.getElementById('ai-output-container').style.display = 'none'; // Hide AI output
+        }
+
         function updateNowPlaying(index) {
             const video = videoPlaylist[index];
             document.getElementById('video-title').textContent = video.title;
             document.getElementById('video-channel').textContent = video.channel;
         }
+
         function updateActivePlaylistItem(activeIndex) {
             document.querySelectorAll('.playlist-item').forEach((item, index) => {
                 item.classList.toggle('active', index === activeIndex);
             });
         }
-
-        // Initial Load
-        document.addEventListener('DOMContentLoaded', () => updateUI(currentLang));
-
     </script>
 </body>
 </html>
