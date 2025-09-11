@@ -272,19 +272,19 @@
 
         // --- 2. DATA ---
         const videoPlaylist = [
-            { id: 'NjtvFqeCoXE', title: 'Ei Mon Tomake Dilam', channel: 'Anupam Movie Songs' },
-            { id: '_pg9dzPjTPQ', title: 'Tumi Chader Jochona Nao', channel: 'Anupam Movie Songs' },
-            { id: '1b2A2srXNTk', title: 'Amar Jibone Tumi', channel: 'Anupam Movie Songs' },
-            { id: 'TAyR0VA-jcI', title: 'Ek Dike Prithibi', channel: 'James' },
-            { id: 'w0QdcL4HvLU', title: 'Bhalobashi E Kotha', channel: 'Anupam Movie Songs' },
-            { id: 'VEYzzU_flCg', title: 'Amar Sonar Moyna Pakhi', channel: 'Samina Chowdhury' }
+            { id: 'NjtvFqeCoXE', title: 'Ei Mon Manob Kolyan | মানব কল্যাণ | আবুল ফজল | HSC AudioBook | Digital Radio Bangla | Bangla Academic HSC Dilam', channel: '  Digital Radio Bangla' },
+            { id: '_pg9dzPjTPQ', title: 'Aparichita | অপরিচিতা | Rabi Tagore| রবীন্দ্রনাথ ঠাকুর | HSC | HSC AudioBook | Digital Radio Bangla', channel: 'Digital Radio Bangla' },
+            { id: '1b2A2srXNTk', title: 'Necklace | নেকলেস । গী দ্য মোপাসাঁ । HSC | Audiobook | Digital Radio Bangla | পূর্ণেন্দু দস্তিদার', channel: 'Digital Radio Bangla' },
+            { id: 'TAyR0VA-jcI', title: 'Manob Kolyan | মানব কল্যাণ | আবুল ফজল | HSC | Audiobook | Digital Radio Bangla | Bangla Academic HSC', channel: 'Digital Radio Bangla' },
+            { id: 'w0QdcL4HvLU', title: 'Mashi Pishi | মাসি - পিসি | মানিক বন্দ্যোপাধ্যায় | HSC | Digital Radio Bangla | Bangla Audiobook |', channel: 'Digital Radio Bangla' },
+            { id: 'VEYzzU_flCg', title: 'AMAR POTH | আমার পথ | Kazi Nazrul Islam | কাজী নজরুল ইসলাম | HSC AudioBook | Digital Radio Bangla', channel: 'Digital Radio Bangla' }
         ];
 
         let player;
         let currentVideoIndex = 0;
 
         // --- 3. GEMINI API INTEGRATION ---
-        const apiKey = "";
+        const apiKey = "AIzaSyCqDwu5H5f1PjfYbq00B2b23m2P0zVK8vM";
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
         
         async function callGeminiAPI(prompt, button) {
@@ -443,7 +443,7 @@
             updateActivePlaylistItem(index);
             loadNote(); // Load the note for the new video
 
-            document.getElementById('ai-output-container').style.display = 'none'; // Hide AI output
+            document.getElementById('ai-output-container').style.displFay = 'none'; // Hide AI output
         }
 
         function updateNowPlaying(index) {
