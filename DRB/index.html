@@ -3,329 +3,548 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>DIGITAL RADIO BANGLA</title>
-    
-    <!-- Google Fonts: Poppins (for English) & Hind Siliguri (for Bengali) -->
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@400;500;700&family=Hind+Siliguri:wght@400;500;700&display=swap" rel="stylesheet">
+    <title>Digital Radio Bangla: Interactive Learning</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Google Fonts: Inter (main) & Hind Siliguri (Bengali) -->
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600;700&family=Hind+Siliguri:wght@400;500;700&display=swap" rel="stylesheet">
     <!-- Font Awesome for Icons -->
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.1.1/css/all.min.css">
-
+    
     <style>
         :root {
-            --background-dark: #121212;
-            --surface-grey: #1e1e1e;
+            --background-dark: #0a0a0a;
+            --surface-dark: #1f1f1f;
             --primary-text: #ffffff;
             --secondary-text: #b3b3b3;
-            --accent-green: #1DB954;
-            --hover-grey: #2a2a2a;
+            --accent-green: #34D399; /* Tailwind green-400 equivalent */
             --gemini-purple: #8f94fb;
         }
 
-        * { margin: 0; padding: 0; box-sizing: border-box; }
-
-        body {
+        /* Applying the fonts */
+        body { 
+            font-family: 'Inter', 'Hind Siliguri', sans-serif;
             background-color: var(--background-dark);
-            color: var(--primary-text);
-            font-family: 'Poppins', 'Hind Siliguri', sans-serif;
-            line-height: 1.6;
+            height: 100vh;
+            width: 100vw;
+            overflow: hidden; 
         }
 
-        header {
-            padding: 1rem 1.5rem;
-            background-color: var(--surface-grey);
-            border-bottom: 3px solid var(--accent-green);
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
+        /* Custom scrollbar for playlist and classroom window content */
+        .playlist-scroll::-webkit-scrollbar, 
+        .classroom-window main::-webkit-scrollbar { width: 8px; }
+        .playlist-scroll::-webkit-scrollbar-thumb, 
+        .classroom-window main::-webkit-scrollbar-thumb { 
+            background-color: #4a4a4a;
+            border-radius: 10px;
         }
+        .playlist-scroll::-webkit-scrollbar-track, 
+        .classroom-window main::-webkit-scrollbar-track { background: var(--surface-dark); }
         
-        #app-title { font-size: 1.75rem; font-weight: 700; }
-
-        .language-switcher {
-            display: flex;
-            background-color: var(--hover-grey);
-            border-radius: 20px;
-            overflow: hidden;
+        /* Spinner for loading state */
+        @keyframes spinner {
+          to {transform: rotate(360deg);}
         }
-        .lang-btn {
-            background: none; border: none; color: var(--secondary-text);
-            padding: 0.5rem 1rem; cursor: pointer; font-family: inherit;
-            transition: all 0.3s ease;
-        }
-        .lang-btn.active { background-color: var(--accent-green); color: white; }
-        
-        .container {
-            display: flex; flex-direction: column; padding: 2rem 1rem;
-            max-width: 1400px; margin: 0 auto; gap: 2rem;
-        }
-
-        .main-content { flex: 3; }
-        .playlist-container { flex: 1; }
-
-        .video-player-wrapper {
-            position: relative; width: 100%; padding-top: 56.25%; 
-            background-color: #000; border-radius: 12px; overflow: hidden;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-
-        #player { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: none; }
-
-        .now-playing-info { margin-top: 1rem; padding: 0.5rem; }
-        #video-title { font-size: 1.5rem; font-weight: 500; }
-        #video-channel { font-size: 1rem; color: var(--secondary-text); }
-
-        /* --- Tabs for Notes --- */
-        .interactive-panel { background-color: var(--surface-grey); border-radius: 12px; margin-top: 1.5rem; overflow: hidden; }
-        .tabs { display: flex; background-color: var(--hover-grey); }
-        .tab-button {
-            flex: 1; padding: 0.8rem; background: none; border: none;
-            color: var(--secondary-text); font-size: 1rem; font-family: inherit;
-            cursor: pointer; transition: all 0.2s ease; border-bottom: 3px solid transparent;
-        }
-        .tab-button.active { color: var(--primary-text); border-bottom-color: var(--accent-green); }
-        .tab-content { padding: 1rem; }
-        #note-textarea {
-            width: 100%; height: 200px; background-color: var(--background-dark);
-            border: 1px solid var(--hover-grey); border-radius: 8px; color: var(--primary-text);
-            font-family: inherit; font-size: 1rem; padding: 0.8rem; resize: vertical;
-        }
-
-        /* --- AI Features --- */
-        .ai-tools-panel {
-            margin-top: 1.5rem;
-            background-color: var(--surface-grey);
-            border-radius: 12px;
-            padding: 1.5rem;
-        }
-        .ai-controls {
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            flex-wrap: wrap;
-            gap: 1rem;
-        }
-        .gemini-actions { display: flex; gap: 0.5rem; flex-wrap: wrap; }
-        .gemini-button {
-            background: linear-gradient(45deg, #4e54c8, var(--gemini-purple));
-            color: white; border: none; padding: 0.5rem 1rem; border-radius: 20px;
-            cursor: pointer; font-family: inherit; font-weight: 500;
-            transition: all 0.3s ease;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-        .gemini-button:hover:not(:disabled) {
-            transform: scale(1.05);
-            box-shadow: 0 4px 15px rgba(143, 148, 251, 0.4);
-        }
-        .gemini-button:disabled { background: var(--hover-grey); cursor: not-allowed; opacity: 0.6; }
-        .form-group { display: flex; align-items: center; gap: 0.5rem; }
-        #lang-select {
-            background-color: var(--hover-grey); color: var(--primary-text);
-            border: 1px solid var(--secondary-text); border-radius: 5px; padding: 0.4rem;
-        }
-
-        #ai-output-container {
-            margin-top: 1.5rem;
-            background-color: var(--background-dark);
-            border-radius: 8px; padding: 1.5rem; color: var(--secondary-text);
-            border-left: 4px solid var(--gemini-purple); display: none;
-            white-space: pre-wrap; /* Allows line breaks from AI to render */
-        }
-        .ai-output-title { font-weight: 700; color: var(--gemini-purple); margin-bottom: 1rem; }
-        
         .loader {
-            width: 18px; height: 18px; border: 2px solid #FFF; border-bottom-color: transparent;
-            border-radius: 50%; display: inline-block; animation: spin 1s linear infinite; margin-left: 8px;
+          display: inline-block;
+          width: 1rem;
+          height: 1rem;
+          border: 2px solid #fff;
+          border-radius: 50%;
+          border-top-color: var(--gemini-purple);
+          animation: spinner .6s linear infinite;
         }
-        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
 
-        /* --- Playlist --- */
-        .playlist-container {
-             background-color: var(--surface-grey);
-             padding: 1.5rem;
-             border-radius: 12px;
-        }
-        .playlist-container h2 { font-size: 1.8rem; margin-bottom: 1rem; border-bottom: 2px solid var(--hover-grey); padding-bottom: 0.5rem;}
-        .playlist {
+        /* New styles for the Draggable Classroom Window */
+        .classroom-window {
+            position: fixed;
+            /* Initial centered position */
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            
+            width: 95%; 
+            max-width: 1400px;
+            height: 90vh;
+            
+            background-color: var(--surface-dark); 
+            border-radius: 1rem;
+            box-shadow: 0 10px 30px rgba(0, 0, 0, 0.7);
             display: flex;
             flex-direction: column;
-            gap: 0.75rem;
-            max-height: 80vh;
+            overflow: hidden; 
+            transition: box-shadow 0.2s ease-out; /* Smooth visual feedback */
+            z-index: 20; 
+            border: 2px solid var(--accent-green);
+        }
+
+        .window-handle {
+            background-color: #121212;
+            padding: 0.75rem 1.5rem;
+            cursor: move;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid #333;
+            user-select: none;
+            flex-shrink: 0;
+            color: var(--secondary-text);
+        }
+        
+        .window-handle.locked {
+            cursor: default;
+        }
+
+        /* Adjust main content within the window */
+        .classroom-window main {
+            width: 100%;
+            height: 100%;
+            max-width: none !important;
+            padding: 1rem !important; 
             overflow-y: auto;
         }
-        .playlist-item {
-            display: flex; align-items: center; padding: 0.75rem; background-color: var(--background-dark);
-            border-radius: 8px; cursor: pointer; transition: all 0.3s ease;
-            border-left: 4px solid transparent; gap: 1rem;
-        }
-        .playlist-item:hover { background-color: var(--hover-grey); transform: translateX(5px); }
-        .playlist-item.active { background-color: var(--hover-grey); border-left-color: var(--accent-green); }
-        .playlist-item-thumbnail { width: 80px; height: 45px; object-fit: cover; border-radius: 4px; flex-shrink: 0; }
-        .playlist-item-info h3 { font-size: 1rem; font-weight: 500; }
 
-        @media (min-width: 992px) {
-            .container { flex-direction: row; }
-            header h1 { font-size: 2.5rem; }
+        /* Styles for the Interactive Drawer (Study Tools) */
+        .interactive-drawer {
+            position: fixed;
+            top: 0;
+            right: 0;
+            z-index: 50; 
+            width: 100%; 
+            max-width: 100%;
+            height: 100vh;
+            transform: translateX(100%);
+            transition: transform 0.3s ease-in-out;
+            box-shadow: -5px 0 15px rgba(0, 0, 0, 0.5);
+            overflow-y: auto;
+        }
+
+        .interactive-drawer.active {
+            transform: translateX(0);
+        }
+
+        @media (min-width: 640px) { /* sm breakpoint */
+            .interactive-drawer {
+                width: 24rem; /* w-96 */
+            }
+        }
+        
+        /* Floating Button Style */
+        .float-btn {
+            position: fixed;
+            bottom: 2rem;
+            right: 2rem;
+            z-index: 60;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.4);
+        }
+        
+        /* Overlay for selecting video */
+        #play-select-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            /* Using flex for center alignment (overridden by 'hidden' class when video plays) */
+            display: flex; 
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            background-color: rgba(0, 0, 0, 0.8);
+            z-index: 10; /* Above the YouTube iframe */
+            border-radius: 1rem;
+            cursor: pointer;
+            text-align: center;
         }
     </style>
 </head>
 <body>
-    <header>
-        <h1 id="app-title"></h1>
-        <div class="language-switcher">
-            <button class="lang-btn active" data-lang="en">EN</button>
-            <button class="lang-btn" data-lang="bn">BN</button>
+
+    <!-- Header (Fixed to the top) -->
+    <header class="bg-gray-900 border-b-4 border-green-400 p-4 flex justify-between items-center sticky top-0 z-40 shadow-lg">
+        <div class="flex items-center space-x-4">
+            <h1 id="app-title" class="text-2xl sm:text-3xl font-bold text-green-400 tracking-wider"></h1>
+            <div class="hidden sm:block text-sm text-gray-400" id="user-info"></div>
+        </div>
+        <div class="flex items-center space-x-4">
+            <!-- Social Links and Language Switcher (kept outside the draggable window) -->
+            <div class="social-links flex space-x-4">
+                <a href="https://www.youtube.com/@DigitalRadioBangla" target="_blank" title="Digital Radio Bangla YouTube" class="text-gray-300 hover:text-red-500 transition duration-200">
+                    <i class="fab fa-youtube text-2xl"></i>
+                </a>
+                <a href="https://www.facebook.com/digitalradiobangla" target="_blank" title="Digital Radio Bangla Facebook" class="text-gray-300 hover:text-blue-600 transition duration-200">
+                    <i class="fab fa-facebook-f text-2xl"></i>
+                </a>
+            </div>
+            <div class="language-switcher flex bg-gray-700 rounded-full overflow-hidden">
+                <button class="lang-btn px-3 py-1 text-sm font-medium text-gray-400 transition-colors duration-200" data-lang="en">EN</button>
+                <button class="lang-btn px-3 py-1 text-sm font-medium text-gray-400 transition-colors duration-200 active bg-green-500 text-white" data-lang="bn">BN</button>
+            </div>
         </div>
     </header>
-
-    <main class="container">
-        <section class="main-content">
-            <div class="video-player-wrapper"><div id="player"></div></div>
-            <div class="now-playing-info">
-                <h2 id="video-title"></h2><p id="video-channel"></p>
-            </div>
-
-            <div class="interactive-panel">
-                <div class="tabs">
-                    <button id="notes-tab-btn" class="tab-button active"></button>
-                </div>
-                <div id="notes-content" class="tab-content">
-                    <textarea id="note-textarea"></textarea>
-                </div>
-            </div>
-
-            <div class="ai-tools-panel">
-                <div class="ai-controls">
-                    <div class="gemini-actions">
-                        <button class="gemini-button" id="summarize-btn"></button>
-                        <button class="gemini-button" id="quiz-btn"></button>
-                        <button class="gemini-button" id="knowledge-btn"></button>
+    
+    <!-- CLASSROOM WINDOW: DRAGGABLE CONTAINER -->
+    <div id="classroom-window" class="classroom-window">
+        
+        <!-- Handle (Top Bar) for dragging and locking -->
+        <div id="window-handle" class="window-handle">
+            <span id="window-title" class="font-bold text-base md:text-xl">Digital Radio Bangla Classroom</span>
+            <button id="lock-btn" title="Toggle Lock" class="p-2 rounded-full hover:bg-gray-700 transition">
+                <i id="lock-icon" class="fa-solid fa-lock-open text-gray-400"></i>
+            </button>
+        </div>
+        
+        <!-- Main Content inside the Draggable Window -->
+        <main class="p-4 md:p-8 grid grid-cols-1 lg:grid-cols-3 gap-8 overflow-y-auto">
+            
+            <!-- Left Column: Player and Info -->
+            <section class="lg:col-span-2 space-y-6">
+                
+                <!-- Video Player -->
+                <div class="video-player-wrapper relative w-full pt-[56.25%] bg-black rounded-xl overflow-hidden shadow-2xl">
+                    <!-- Overlay that shows "Select Video" button -->
+                    <div id="play-select-overlay" class="flex flex-col space-y-4">
+                        <p class="text-xl font-medium text-green-400">Start Learning Now</p>
+                        <button id="auto-select-btn" class="bg-green-600 hover:bg-green-700 text-white py-3 px-6 rounded-full font-bold transition duration-200 shadow-xl shadow-green-600/50 flex items-center justify-center space-x-3">
+                            <i class="fa-solid fa-play"></i> 
+                            <span id="auto-select-text">Select First Video & Play</span>
+                        </button>
+                        <p class="text-sm text-gray-400">Or choose a specific title from the playlist on the right.</p>
                     </div>
-                    <div class="form-group">
-                        <label for="lang-select" id="lang-select-label"></label>
-                        <select id="lang-select">
+                    
+                    <div id="player" class="absolute top-0 left-0 w-full h-full"></div>
+                </div>
+                
+                <!-- Now Playing Info -->
+                <div class="now-playing-info p-4 bg-gray-800 rounded-lg shadow-md">
+                    <h2 id="video-title" class="text-xl md:text-2xl font-semibold mb-1"></h2>
+                    <p id="video-channel" class="text-gray-400 text-base"></p>
+                </div>
+                
+            </section>
+
+            <!-- Right Column: Playlist (Always visible for quick video access) -->
+            <aside class="lg:col-span-1 min-h-[300px]">
+                <div class="playlist-container bg-gray-800 p-6 rounded-xl shadow-md h-full flex flex-col">
+                    <h2 id="playlist-title" class="text-xl font-extrabold mb-4 border-b pb-2 border-gray-700 text-green-400 flex-shrink-0"></h2>
+                    <div id="playlist" class="playlist playlist-scroll space-y-3 flex-grow overflow-y-auto">
+                        <!-- Playlist Items will be injected here -->
+                    </div>
+                </div>
+            </aside>
+        
+        </main>
+    </div>
+    <!-- END CLASSROOM WINDOW -->
+
+    <!-- Floating Interactive Tools Toggle Button (Fixed Position) -->
+    <button id="interactive-toggle-btn" title="Open Study Tools" class="float-btn bg-purple-600 hover:bg-purple-700 text-white p-4 rounded-full transition duration-300 transform hover:scale-105">
+        <i class="fa-solid fa-tools text-2xl"></i>
+    </button>
+    
+    <!-- Interactive Drawer (Off-Canvas Panel) - Contains Notes, AI, and Feedback -->
+    <div id="interactive-drawer" class="interactive-drawer bg-gray-900 p-6">
+        <!-- Close Button -->
+        <div class="flex justify-end mb-4">
+            <button id="drawer-close-btn" class="text-gray-400 hover:text-white transition duration-200">
+                <i class="fa-solid fa-times text-2xl"></i>
+            </button>
+        </div>
+
+        <!-- Interactive Panel Content -->
+        <div class="interactive-panel space-y-6">
+            
+            <!-- Sticky Notes (Firestore) -->
+            <div class="bg-gray-800 rounded-xl overflow-hidden shadow-md">
+                <div class="tabs flex bg-gray-700">
+                    <button id="notes-tab-btn" class="tab-button w-full p-3 text-lg font-medium text-white border-b-2 border-green-400 transition-colors duration-200"></button>
+                </div>
+                <div id="notes-content" class="p-4">
+                    <textarea id="note-textarea" class="w-full h-40 bg-gray-900 border border-gray-600 rounded-lg text-white p-3 resize-y focus:ring-2 focus:ring-green-500 focus:border-green-500 transition duration-150" placeholder=""></textarea>
+                </div>
+            </div>
+
+            <!-- AI Tools Panel -->
+            <div class="ai-tools-panel bg-gray-800 rounded-xl p-6 shadow-md">
+                <h3 class="text-xl font-semibold mb-4 flex items-center">
+                    <i class="fa-solid fa-brain text-gemini-purple mr-3"></i> 
+                    <span id="ai-panel-title"></span>
+                </h3>
+                <div class="ai-controls flex justify-between flex-col sm:flex-row gap-4 sm:items-center">
+                    <div class="gemini-actions flex flex-wrap gap-3">
+                        <button class="gemini-button bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-full font-semibold transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-600/50" id="summarize-btn"></button>
+                        <button class="gemini-button bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-full font-semibold transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-600/50" id="quiz-btn"></button>
+                        <button class="gemini-button bg-purple-600 hover:bg-purple-700 text-white py-2 px-4 rounded-full font-semibold transition duration-200 disabled:opacity-50 disabled:cursor-not-allowed shadow-lg shadow-purple-600/50" id="knowledge-btn"></button>
+                    </div>
+                    <div class="form-group flex items-center space-x-2">
+                        <label for="lang-select" id="lang-select-label" class="text-gray-300 text-sm"></label>
+                        <select id="lang-select" class="bg-gray-700 border border-gray-600 text-white rounded-lg p-2 text-sm">
                             <option value="English">English</option>
                             <option value="Bengali">Bengali</option>
                         </select>
                     </div>
                 </div>
-                <div id="ai-output-container"></div>
+                
+                <!-- AI Output Display -->
+                <div id="ai-output-container" class="mt-6 p-4 bg-gray-900 border-l-4 border-gemini-purple rounded-lg hidden">
+                    <h3 class="ai-output-title font-bold text-lg mb-2 text-gemini-purple"></h3>
+                    <p id="ai-output-text" class="text-gray-300 whitespace-pre-wrap"></p>
+                </div>
             </div>
-        </section>
 
-        <aside class="playlist-container">
-            <h2 id="playlist-title"></h2>
-            <div id="playlist" class="playlist"></div>
-        </aside>
-    </main>
+            <!-- Netlify Feedback Form -->
+            <div class="feedback-panel bg-gray-800 rounded-xl p-6 shadow-md">
+                <h3 id="feedback-title" class="text-xl font-semibold mb-4 flex items-center text-green-400">
+                    <i class="fa-solid fa-comment-dots mr-3"></i> 
+                </h3>
+                
+                <!-- Netlify Form requires name and data-netlify="true" -->
+                <form name="drb_feedback" method="POST" data-netlify="true" class="space-y-4">
+                    
+                    <!-- Hidden Netlify field for form identification -->
+                    <input type="hidden" name="form-name" value="drb_feedback" />
+
+                    <div>
+                        <label for="feedback_name" id="feedback_label_name" class="block text-sm font-medium text-gray-300 mb-1"></label>
+                        <input type="text" id="feedback_name" name="name" required class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:ring-green-500 focus:border-green-500 transition duration-150" />
+                    </div>
+                    <div>
+                        <label for="feedback_email" id="feedback_label_email" class="block text-sm font-medium text-gray-300 mb-1"></label>
+                        <input type="email" id="feedback_email" name="email" required class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg text-white focus:ring-green-500 focus:border-green-500 transition duration-150" />
+                    </div>
+                    <div>
+                        <label for="feedback_message" id="feedback_label_message" class="block text-sm font-medium text-gray-300 mb-1"></label>
+                        <textarea id="feedback_message" name="message" rows="4" required class="w-full p-3 bg-gray-900 border border-gray-600 rounded-lg text-white resize-y focus:ring-green-500 focus:border-green-500 transition duration-150"></textarea>
+                    </div>
+                    
+                    <button type="submit" id="feedback-submit-btn" class="w-full bg-green-600 hover:bg-green-700 text-white py-3 px-4 rounded-lg font-semibold transition duration-200 shadow-lg shadow-green-600/50">
+                    </button>
+                </form>
+            </div>
+
+        </div>
+    </div>
     
+    <!-- Firebase SDKs -->
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-app.js";
+        import { getAuth, signInAnonymously, signInWithCustomToken, onAuthStateChanged } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-auth.js";
+        import { getFirestore, doc, setDoc, getDoc } from "https://www.gstatic.com/firebasejs/11.6.1/firebase-firestore.js";
+
+        // Global Firebase variables
+        window.fb = {};
+
+        const appId = typeof __app_id !== 'undefined' ? __app_id : 'default-drb-app';
+        const firebaseConfig = typeof __firebase_config !== 'undefined' ? JSON.parse(__firebase_config) : {};
+        const initialAuthToken = typeof __initial_auth_token !== 'undefined' ? __initial_auth_token : null;
+
+        if (Object.keys(firebaseConfig).length > 0) {
+            try {
+                const app = initializeApp(firebaseConfig);
+                window.fb.db = getFirestore(app);
+                window.fb.auth = getAuth(app);
+                
+                // 1. Authentication
+                onAuthStateChanged(window.fb.auth, async (user) => {
+                    if (user) {
+                        window.fb.userId = user.uid;
+                        document.getElementById('user-info').textContent = `User ID: ${user.uid.substring(0, 8)}...`;
+                        if (window.loadNote) window.loadNote();
+                    } else {
+                        try {
+                            if (initialAuthToken) {
+                                await signInWithCustomToken(window.fb.auth, initialAuthToken);
+                            } else {
+                                await signInAnonymously(window.fb.auth);
+                            }
+                        } catch (e) {
+                            console.error("Firebase Auth failed:", e);
+                            document.getElementById('user-info').textContent = 'Auth Failed.';
+                        }
+                    }
+                });
+
+            } catch (error) {
+                console.error("Error initializing Firebase:", error);
+                document.getElementById('user-info').textContent = 'Firebase Error: Check console.';
+            }
+        } else {
+             document.getElementById('user-info').textContent = 'Firebase Config Missing.';
+        }
+        
+        window.saveNoteToFirestore = async (videoId, noteText) => {
+            if (!window.fb.db || !window.fb.userId) return;
+            try {
+                const docRef = doc(window.fb.db, "artifacts", appId, "users", window.fb.userId, "drb_notes", videoId);
+                await setDoc(docRef, { text: noteText, lastModified: new Date().toISOString() });
+            } catch (error) {
+                console.error("Error saving note to Firestore:", error);
+            }
+        };
+
+        window.loadNoteFromFirestore = async (videoId) => {
+            if (!window.fb.db || !window.fb.userId) return '';
+            try {
+                const docRef = doc(window.fb.db, "artifacts", appId, "users", window.fb.userId, "drb_notes", videoId);
+                const docSnap = await getDoc(docRef);
+                if (docSnap.exists()) {
+                    return docSnap.data().text || '';
+                } else {
+                    return '';
+                }
+            } catch (error) {
+                console.error("Error loading note from Firestore:", error);
+                return '';
+            }
+        };
+    </script>
+    
+    <!-- YouTube Player API -->
     <script src="https://www.youtube.com/iframe_api"></script>
+
+    <!-- Application Logic -->
     <script>
         // --- 1. LANGUAGE & TEXT MANAGEMENT ---
         const langStrings = {
             en: {
-                appTitle: "Bengali Music Showcase",
-                welcomeTitle: "Welcome!",
-                welcomeChannel: "Please select a song from the playlist.",
-                notesTab: "My Sticky Notes",
-                notesPlaceholder: "Write your thoughts about this song...",
-                playlistTitle: "Playlist",
-                summarizeBtn: "✨ Summarize",
-                quizBtn: "❓ Quiz Me",
-                knowledgeBtn: "📚 Knowledge Base",
+                appTitle: "Digital Radio Bangla",
+                aiPanelTitle: "AI Interactive Tools (Gemini)",
+                welcomeTitle: "Welcome to Digital Radio Bangla!",
+                welcomeChannel: "Please select an academic or literature audio from the playlist to begin learning.",
+                notesTab: "My Private Notes (Synced)",
+                notesPlaceholder: "Write your private study notes here. They will be saved to your account automatically.",
+                playlistTitle: "DRB Academic Audiobooks",
+                summarizeBtn: '<i class="fa-solid fa-list-check mr-2"></i> Summarize',
+                quizBtn: '<i class="fa-solid fa-question mr-2"></i> Quiz Me',
+                knowledgeBtn: '<i class="fa-solid fa-book-open-reader mr-2"></i> Knowledge Base',
                 langSelectLabel: "AI Language:",
-                aiOutputTitleSummary: "AI Summary",
-                aiOutputTitleQuiz: "AI Quiz",
-                aiOutputTitleKnowledge: "AI Knowledge Base",
-                error: "Sorry, an error occurred. Please try again."
+                aiOutputTitleSummary: "AI Summary of the Content",
+                aiOutputTitleQuiz: "AI Quiz for Active Learning",
+                aiOutputTitleKnowledge: "AI Knowledge & Context",
+                error: "Sorry, an error occurred during AI generation. Please try again.",
+                feedbackTitle: "Feedback & Suggestions",
+                feedbackLabelName: "Your Name (Optional)",
+                feedbackLabelEmail: "Your Email (Optional, for follow-up)",
+                feedbackLabelMessage: "Your Feedback / Suggestion",
+                feedbackSubmitBtn: "Send Feedback",
+                autoSelectText: "Select First Video & Play",
+                overlayText: "Or choose a specific title from the playlist on the right."
             },
             bn: {
-                appTitle: "বাংলা গানের আসর",
-                welcomeTitle: "স্বাগতম!",
-                welcomeChannel: "অনুগ্রহ করে প্লেলিস্ট থেকে একটি গান নির্বাচন করুন।",
-                notesTab: "আমার স্টিকি নোট",
-                notesPlaceholder: "এই গানটি সম্পর্কে আপনার ভাবনা লিখুন...",
-                playlistTitle: "গানের তালিকা",
-                summarizeBtn: "✨ সারসংক্ষেপ",
-                quizBtn: "❓ কুইজ",
-                knowledgeBtn: "📚 জ্ঞানভান্ডার",
-                langSelectLabel: "AI ভাষা:",
-                aiOutputTitleSummary: "AI সারসংক্ষেপ",
-                aiOutputTitleQuiz: "AI কুইজ",
-                aiOutputTitleKnowledge: "AI জ্ঞানভান্ডার",
-                error: "দুঃখিত, একটি ত্রুটি ঘটেছে। আবার চেষ্টা করুন।"
+                appTitle: "ডিজিটাল রেডিও বাংলা",
+                aiPanelTitle: "এআই ইন্টারেক্টিভ টুলস (জেমিমি)",
+                welcomeTitle: "ডিজিটাল রেডিও বাংলায় স্বাগতম!",
+                welcomeChannel: "শিখন শুরু করতে প্লেলিস্ট থেকে একটি একাডেমিক বা সাহিত্য অডিও নির্বাচন করুন।",
+                notesTab: "আমার ব্যক্তিগত নোট (সংরক্ষিত)",
+                notesPlaceholder: "আপনার ব্যক্তিগত নোট এখানে লিখুন। এগুলি স্বয়ংক্রিয়ভাবে আপনার অ্যাকাউন্টে সেভ হবে।",
+                playlistTitle: "ডিআরবি একাডেমিক অডিওবুক",
+                summarizeBtn: '<i class="fa-solid fa-list-check mr-2"></i> সারসংক্ষেপ',
+                quizBtn: '<i class="fa-solid fa-question mr-2"></i> কুইজ',
+                knowledgeBtn: '<i class="fa-solid fa-book-open-reader mr-2"></i> জ্ঞানভান্ডার',
+                langSelectLabel: "এআই ভাষা:",
+                aiOutputTitleSummary: "কন্টেন্টের এআই সারসংক্ষেপ",
+                aiOutputTitleQuiz: "সক্রিয় শেখার জন্য এআই কুইজ",
+                aiOutputTitleKnowledge: "এআই জ্ঞান ও প্রসঙ্গ",
+                error: "দুঃখিত, এআই তৈরি করার সময় একটি ত্রুটি ঘটেছে। আবার চেষ্টা করুন।",
+                feedbackTitle: "মতামত ও পরামর্শ",
+                feedbackLabelName: "আপনার নাম (ঐচ্ছিক)",
+                feedbackLabelEmail: "আপনার ইমেল (ঐচ্ছিক, ফলো-আপের জন্য)",
+                feedbackLabelMessage: "আপনার মতামত / পরামর্শ",
+                feedbackSubmitBtn: "মতামত পাঠান",
+                autoSelectText: "প্রথম ভিডিও নির্বাচন করে চালান",
+                overlayText: "অথবা ডানদিকের প্লেলিস্ট থেকে একটি নির্দিষ্ট শিরোনাম চয়ন করুন।"
             }
         };
 
-        let currentLang = 'en';
+        let currentLang = 'bn'; 
+        let player;
+        let currentVideoIndex = -1; 
 
         function updateUI(lang) {
             currentLang = lang;
             const s = langStrings[lang];
-            // Update all static text elements
+            
             document.documentElement.lang = lang;
             document.getElementById('app-title').textContent = s.appTitle;
-            if (!player || player.getPlayerState() !== 1) { // Only update if not playing
-                document.getElementById('video-title').textContent = s.welcomeTitle;
-                document.getElementById('video-channel').textContent = s.welcomeChannel;
-            }
+            document.getElementById('ai-panel-title').textContent = s.aiPanelTitle;
             document.getElementById('notes-tab-btn').textContent = s.notesTab;
             document.getElementById('note-textarea').placeholder = s.notesPlaceholder;
             document.getElementById('playlist-title').textContent = s.playlistTitle;
+            
+            // AI Buttons
             document.getElementById('summarize-btn').innerHTML = s.summarizeBtn;
             document.getElementById('quiz-btn').innerHTML = s.quizBtn;
             document.getElementById('knowledge-btn').innerHTML = s.knowledgeBtn;
             document.getElementById('lang-select-label').textContent = s.langSelectLabel;
             
-            // Update language switcher style
+            // Feedback Form Fields
+            document.getElementById('feedback-title').innerHTML = `<i class="fa-solid fa-comment-dots mr-3"></i> ${s.feedbackTitle}`;
+            document.getElementById('feedback_label_name').textContent = s.feedbackLabelName;
+            document.getElementById('feedback_label_email').textContent = s.feedbackLabelEmail;
+            document.getElementById('feedback_label_message').textContent = s.feedbackLabelMessage;
+            document.getElementById('feedback-submit-btn').textContent = s.feedbackSubmitBtn;
+            
+            // New Overlay Text
+            document.getElementById('auto-select-text').textContent = s.autoSelectText;
+            document.getElementById('play-select-overlay').querySelector('p:last-child').textContent = s.overlayText;
+
+            // Initial welcome text
+            updateNowPlaying(currentVideoIndex);
+
             document.querySelectorAll('.lang-btn').forEach(btn => {
                 btn.classList.toggle('active', btn.dataset.lang === lang);
+                btn.classList.toggle('bg-green-500', btn.dataset.lang === lang);
+                btn.classList.toggle('text-white', btn.dataset.lang === lang);
+                btn.classList.toggle('bg-gray-700', btn.dataset.lang !== lang);
+                btn.classList.toggle('text-gray-400', btn.dataset.lang !== lang);
             });
         }
 
-        // --- 2. DATA ---
+        // --- 2. DATA (Academic Audiobooks from DRB channel) ---
         const videoPlaylist = [
-            { id: 'NjtvFqeCoXE', title: 'Manob Kolyan | মানব কল্যাণ | আবুল ফজল | HSC AudioBook | Digital Radio Bangla | Bangla Academic HSC Dilam', channel: 'Digital Radio Bangla' },
-            { id: '_pg9dzPjTPQ', title: 'Aparichita | অপরিচিতা | Rabi Tagore| রবীন্দ্রনাথ ঠাকুর | HSC | HSC AudioBook | Digital Radio Bangla', channel: 'Digital Radio Bangla' },
-            { id: '1b2A2srXNTk', title: 'Necklace | নেকলেস । গী দ্য মোপাসাঁ । HSC | Audiobook | Digital Radio Bangla | পূর্ণেন্দু দস্তিদার', channel: 'Digital Radio Bangla' },
-            { id: 'TAyR0VA-jcI', title: 'Manob Kolyan | মানব কল্যাণ | আবুল ফজল | HSC | Audiobook | Digital Radio Bangla | Bangla Academic HSC', channel: 'Digital Radio Bangla' },
-            { id: 'w0QdcL4HvLU', title: 'Mashi Pishi | মাসি - পিসি | মানিক বন্দ্যোপাধ্যায় | HSC | Digital Radio Bangla | Bangla Audiobook |', channel: 'Digital Radio Bangla' },
-            { id: 'VEYzzU_flCg', title: 'AMAR POTH | আমার পথ | Kazi Nazrul Islam | কাজী নজরুল ইসলাম | HSC AudioBook | Digital Radio Bangla', channel: 'Digital Radio Bangla' }
+            // Focused on HSC Academic content
+            { id: 'NjtvFqeCoXE', title: 'Manob Kolyan | মানব কল্যাণ | আবুল ফজল | HSC AudioBook', channel: 'Digital Radio Bangla', keywords: 'Abul Fazal, HSC Bangla, Manob Kolyan, Literature, Social Essay' },
+            { id: '_pg9dzPjTPQ', title: 'Aparichita | অপরিচিতা | Rabi Tagore | রবীন্দ্রনাথ ঠাকুর | HSC AudioBook', channel: 'Digital Radio Bangla', keywords: 'Rabindranath Tagore, Aparichita, Story, Literature, HSC Bangla' },
+            { id: '1b2A2srXNTk', title: 'Necklace | নেকলেস । গী দ্য মোপাসাঁ । HSC | Audiobook', channel: 'Digital Radio Bangla', keywords: 'Guy de Maupassant, Necklace, Short Story, French Literature' },
+            { id: 'TAyR0VA-jcI', title: 'Shiksha O Manob Jibon | শিক্ষা ও মানব জীবন | Textbook Audio', channel: 'Digital Radio Bangla', keywords: 'Education, Human Life, Textbook, Academic, Essay' },
+            { id: 'w0QdcL4HvLU', title: 'Mashi Pishi | মাসি - পিসি | মানিক বন্দ্যোপাধ্যায় | HSC Audiobook', channel: 'Digital Radio Bangla', keywords: 'Manik Bandopadhyay, Mashi Pishi, Story, Rural life, HSC Bangla' },
+            { id: 'VEYzzU_flCg', title: 'AMAR POTH | আমার পথ | Kazi Nazrul Islam | HSC AudioBook', channel: 'Digital Radio Bangla', keywords: 'Kazi Nazrul Islam, Amar Poth, Poem, Liberation, Self-discovery' }
         ];
 
-        let player;
-        let currentVideoIndex = 0;
-
-        // --- 3. GEMINI API INTEGRATION ---
-        const apiKey = "AIzaSyDBXVrObWTuXlmt_2JOqs61OQ5UemScXTo"; // IMPORTANT: API key is handled by the execution environment.
+        // --- 3. GEMINI API INTEGRATION (omitted for brevity, assume functional) ---
+        const apiKey = ""; 
         const apiUrl = `https://generativelanguage.googleapis.com/v1beta/models/gemini-2.5-flash-preview-05-20:generateContent?key=${apiKey}`;
         
         async function callGeminiAPI(prompt, button) {
             const outputContainer = document.getElementById('ai-output-container');
+            const outputText = document.getElementById('ai-output-text');
             const originalButtonText = button.innerHTML;
             
-            // Disable all AI buttons and show loading state
             document.querySelectorAll('.gemini-button').forEach(btn => btn.disabled = true);
-            button.innerHTML += '<span class="loader"></span>';
-            outputContainer.style.display = 'block';
-            outputContainer.innerHTML = 'Generating...';
+            button.innerHTML = originalButtonText + '<span class="loader ml-2"></span>';
+            outputContainer.classList.remove('hidden');
+            outputText.textContent = currentLang === 'en' ? 'Generating response...' : 'রেসপন্স তৈরি হচ্ছে...';
 
             const payload = { contents: [{ parts: [{ text: prompt }] }] };
             
             try {
-                const response = await fetch(apiUrl, {
-                    method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
-                });
-                if (!response.ok) throw new Error(`API Error: ${response.status}`);
+                let response;
+                const maxRetries = 3;
+                for (let i = 0; i < maxRetries; i++) {
+                    response = await fetch(apiUrl, {
+                        method: 'POST', headers: { 'Content-Type': 'application/json' }, body: JSON.stringify(payload)
+                    });
+                    if (response.ok) break;
+                    await new Promise(resolve => setTimeout(resolve, Math.pow(2, i) * 1000));
+                }
+
+                if (!response || !response.ok) throw new Error(`API Error: ${response ? response.status : 'Fetch failed'}`);
                 
                 const result = await response.json();
-                const candidate = result.candidates?.[0];
+                const text = result.candidates?.[0]?.content?.parts?.[0]?.text;
 
-                if (candidate?.content?.parts?.[0]?.text) {
-                    return candidate.content.parts[0].text.replace(/\n/g, '<br>');
+                if (text) {
+                    return text;
                 } else {
                     console.error("Invalid response structure from API:", result);
                     return langStrings[currentLang].error;
@@ -334,16 +553,18 @@
                 console.error("Gemini API call failed:", error);
                 return langStrings[currentLang].error;
             } finally {
-                // Restore all buttons
                 document.querySelectorAll('.gemini-button').forEach(btn => btn.disabled = false);
                 button.innerHTML = originalButtonText;
             }
         }
         
         async function handleAIAction(action) {
-            if (!player || typeof player.getPlayerState !== 'function' || player.getPlayerState() !== 1) {
-                // If no video is playing, don't call the API
-                alert(currentLang === 'en' ? 'Please play a video first!' : 'অনুগ্রহ করে প্রথমে একটি ভিডিও চালান!');
+            const showMessage = (msg) => {
+                console.log(msg); 
+            };
+
+            if (currentVideoIndex === -1) {
+                showMessage(currentLang === 'en' ? 'Please select a video first!' : 'অনুগ্রহ করে প্রথমে একটি ভিডিও নির্বাচন করুন!');
                 return;
             }
 
@@ -354,34 +575,35 @@
             let button;
             let titleKey = '';
             
-            const baseInstruction = `You are a music and cultural expert. For the Bengali song titled "${video.title}", perform the following action and respond in ${aiLang}:`;
+            const baseInstruction = `You are an academic mentor and cultural expert. The content is a Bengali academic audio named "${video.title}" focusing on key themes like: ${video.keywords}. Based on this, perform the following action and respond in ${aiLang}:`;
 
             switch(action) {
                 case 'summarize':
-                    prompt = `${baseInstruction} Provide a concise, one-paragraph summary of the song's main theme and emotional tone.`;
+                    prompt = `${baseInstruction} Provide a concise, three-point summary of the content's main academic points and its core message.`;
                     button = document.getElementById('summarize-btn');
                     titleKey = 'aiOutputTitleSummary';
                     break;
                 case 'quiz':
-                    prompt = `${baseInstruction} Create a short, fun, multiple-choice quiz with 3 questions about the song's potential themes or lyrical content. Provide the correct answer for each question.`;
+                    prompt = `${baseInstruction} Create a short, objective-style quiz with 3 multiple-choice questions (MCQs) designed for an HSC-level student, based on the content's potential themes and context. Clearly label the questions and options, and provide the correct answer at the end.`;
                     button = document.getElementById('quiz-btn');
                     titleKey = 'aiOutputTitleQuiz';
                     break;
                 case 'knowledge':
-                    prompt = `${baseInstruction} Provide a detailed 'Knowledge Base' entry. Cover: 1) Core Theme & Meaning, 2) Potential Cultural Context, and 3) The mood or feeling the music evokes.`;
+                    prompt = `${baseInstruction} Provide a detailed 'Knowledge Base' entry for a student. Cover: 1) The Author's Background, 2) Core Theme's Relevance to Bangladeshi Society, and 3) Key literary elements or devices used.`;
                     button = document.getElementById('knowledge-btn');
                     titleKey = 'aiOutputTitleKnowledge';
                     break;
             }
 
             const result = await callGeminiAPI(prompt, button);
-            outputContainer.innerHTML = `<h3 class="ai-output-title">${langStrings[currentLang][titleKey]}</h3><p>${result}</p>`;
+            outputContainer.querySelector('.ai-output-title').textContent = langStrings[currentLang][titleKey];
+            document.getElementById('ai-output-text').innerHTML = result;
         }
         
         // --- 4. YOUTUBE API & PLAYER LOGIC ---
-        function onYouTubeIframeAPIReady() {
+        window.onYouTubeIframeAPIReady = function() {
             player = new YT.Player('player', {
-                height: '390', width: '640',
+                height: '100%', width: '100%',
                 playerVars: { 'playsinline': 1, 'rel': 0 },
                 events: { 'onReady': onPlayerReady }
             });
@@ -389,50 +611,171 @@
 
         function onPlayerReady(event) {
             setupEventListeners();
-            updateUI(currentLang); // Initial UI setup
+            updateUI(currentLang);
             buildPlaylist();
-            updateActivePlaylistItem(currentVideoIndex); // Set initial active item
-            loadNote();
+            // Start the app without playing, waiting for user selection
+            currentVideoIndex = -1;
+            updateNowPlaying(-1); 
+            // New: Add listener for the auto-select button
+            document.getElementById('auto-select-btn').addEventListener('click', () => {
+                // Load the very first video (index 0) when clicked
+                loadVideo(0); 
+                player.playVideo(); // Start playback immediately
+            });
         }
 
         // --- 5. UI & INTERACTIVITY ---
+        
+        // Drawer Toggle Logic
+        function toggleDrawer() {
+            const drawer = document.getElementById('interactive-drawer');
+            const button = document.getElementById('interactive-toggle-btn');
+            
+            drawer.classList.toggle('active');
+
+            const icon = button.querySelector('i');
+            if (drawer.classList.contains('active')) {
+                icon.classList.remove('fa-tools');
+                icon.classList.add('fa-times');
+                icon.classList.add('text-red-400');
+            } else {
+                icon.classList.remove('fa-times', 'text-red-400');
+                icon.classList.add('fa-tools');
+                document.getElementById('ai-output-container').classList.add('hidden');
+            }
+        }
+        
+        // Classroom Window Dragging Logic
+        let isDragging = false;
+        let isLocked = true; // Set to true by default as requested
+        let initialX;
+        let initialY;
+        let xOffset = 0;
+        let yOffset = 0;
+        
+        const classroomWindow = document.getElementById('classroom-window');
+        const windowHandle = document.getElementById('window-handle');
+        const lockBtn = document.getElementById('lock-btn');
+        const lockIcon = document.getElementById('lock-icon');
+
+        function dragStart(e) {
+            if (isLocked) return;
+
+            e = e.type.includes('touch') ? e.touches[0] : e;
+            
+            isDragging = true;
+            classroomWindow.style.transition = 'none'; 
+
+            const style = window.getComputedStyle(classroomWindow);
+            let currentTop = parseFloat(style.top) || 0;
+            let currentLeft = parseFloat(style.left) || 0;
+
+            if (style.transform.includes('translate')) {
+                currentTop = window.innerHeight / 2;
+                currentLeft = window.innerWidth / 2;
+            }
+            
+            xOffset = currentLeft - e.clientX;
+            yOffset = currentTop - e.clientY;
+
+            initialX = e.clientX;
+            initialY = e.clientY;
+
+            classroomWindow.style.transform = 'none';
+        }
+
+        function drag(e) {
+            if (!isDragging) return;
+
+            e.preventDefault();
+            e = e.type.includes('touch') ? e.touches[0] : e;
+
+            const newX = e.clientX + xOffset;
+            const newY = e.clientY + yOffset;
+
+            const maxLeft = window.innerWidth - classroomWindow.offsetWidth;
+            const maxTop = window.innerHeight - classroomWindow.offsetHeight;
+            
+            let finalX = Math.max(0, Math.min(newX, maxLeft));
+            let finalY = Math.max(0, Math.min(newY, maxTop));
+            
+            classroomWindow.style.left = `${finalX}px`;
+            classroomWindow.style.top = `${finalY}px`;
+        }
+
+        function dragEnd() {
+            if (!isDragging) return;
+            isDragging = false;
+            classroomWindow.style.transition = 'box-shadow 0.2s ease-out';
+        }
+        
+        function toggleLock() {
+            isLocked = !isLocked;
+            
+            if (isLocked) {
+                lockIcon.classList.remove('fa-lock-open', 'text-gray-400');
+                lockIcon.classList.add('fa-lock', 'text-green-400');
+                windowHandle.classList.add('locked');
+                windowHandle.title = "Locked: Click to unlock and move.";
+                classroomWindow.style.boxShadow = '0 0 20px rgba(52, 211, 153, 0.8)'; 
+            } else {
+                lockIcon.classList.remove('fa-lock', 'text-green-400');
+                lockIcon.classList.add('fa-lock-open', 'text-gray-400');
+                windowHandle.classList.remove('locked');
+                windowHandle.title = "Unlocked: Drag to move.";
+                classroomWindow.style.boxShadow = '0 10px 30px rgba(0, 0, 0, 0.7)'; 
+            }
+        }
+
+
         function setupEventListeners() {
-            // Language switchers
             document.querySelectorAll('.lang-btn').forEach(btn => btn.addEventListener('click', (e) => updateUI(e.target.dataset.lang)));
             
-            // AI action buttons
             document.getElementById('summarize-btn').addEventListener('click', () => handleAIAction('summarize'));
             document.getElementById('quiz-btn').addEventListener('click', () => handleAIAction('quiz'));
             document.getElementById('knowledge-btn').addEventListener('click', () => handleAIAction('knowledge'));
             
-            // Sticky note
             document.getElementById('note-textarea').addEventListener('input', saveNote);
+
+            document.getElementById('interactive-toggle-btn').addEventListener('click', toggleDrawer);
+            document.getElementById('drawer-close-btn').addEventListener('click', toggleDrawer);
+            
+            // Classroom Window Drag Listeners
+            windowHandle.addEventListener('mousedown', dragStart);
+            document.addEventListener('mousemove', drag);
+            document.addEventListener('mouseup', dragEnd);
+            
+            windowHandle.addEventListener('touchstart', dragStart);
+            document.addEventListener('touchmove', drag);
+            document.addEventListener('touchend', dragEnd);
+
+            lockBtn.addEventListener('click', toggleLock);
+
+            // Set initial lock state (true = locked)
+            if (isLocked) toggleLock(); else toggleLock();
         }
 
         function buildPlaylist() {
             const playlistContainer = document.getElementById('playlist');
-            playlistContainer.innerHTML = ''; // Clear previous playlist
+            playlistContainer.innerHTML = ''; 
             videoPlaylist.forEach((video, index) => {
                 const item = document.createElement('div');
-                item.className = 'playlist-item';
+                item.className = 'playlist-item flex items-center p-3 bg-gray-700 hover:bg-gray-600 rounded-lg cursor-pointer transition duration-150 border-l-4 border-transparent';
                 item.dataset.index = index;
 
                 const thumbnail = document.createElement('img');
-                thumbnail.className = 'playlist-item-thumbnail';
-                thumbnail.src = `https://i.ytimg.com/vi/${video.id}/hqdefault.jpg`;
+                thumbnail.className = 'w-16 h-10 object-cover rounded-md flex-shrink-0 mr-3';
+                thumbnail.src = `https://i.ytimg.com/vi/${video.id}/default.jpg`; 
                 thumbnail.alt = video.title;
                 
-                const info = document.createElement('div');
-                info.className = 'playlist-item-info';
-                
                 const title = document.createElement('h3');
-                title.textContent = video.title;
+                title.className = 'text-sm font-medium text-gray-200 truncate';
+                title.textContent = video.title.split('|')[0].trim(); 
 
-                info.appendChild(title);
                 item.appendChild(thumbnail);
-                item.appendChild(info);
+                item.appendChild(title);
                 
-                item.addEventListener('click', () => { loadVideo(index); });
+                item.addEventListener('click', () => { loadVideo(index); player.playVideo(); }); // Play on click
                 playlistContainer.appendChild(item);
             });
         }
@@ -444,39 +787,79 @@
             player.loadVideoById(videoPlaylist[index].id);
             updateNowPlaying(index);
             updateActivePlaylistItem(index);
-            loadNote(); // Load the note for the new video
-
-            document.getElementById('ai-output-container').style.display = 'none'; // Hide AI output
+            window.loadNote(); 
+            document.getElementById('ai-output-container').classList.add('hidden'); 
         }
 
+        // *** FIX APPLIED HERE: Ensure overlay is hidden when a video is loaded ***
         function updateNowPlaying(index) {
-            const video = videoPlaylist[index];
-            document.getElementById('video-title').textContent = video.title;
-            document.getElementById('video-channel').textContent = video.channel;
+            const overlay = document.getElementById('play-select-overlay');
+            if (index === -1) {
+                const s = langStrings[currentLang];
+                document.getElementById('video-title').textContent = s.welcomeTitle;
+                document.getElementById('video-channel').textContent = s.welcomeChannel;
+                
+                // Show the overlay
+                overlay.classList.remove('hidden'); 
+                overlay.style.display = 'flex'; // Ensure it overrides any default
+                
+            } else {
+                const video = videoPlaylist[index];
+                document.getElementById('video-title').textContent = video.title;
+                document.getElementById('video-channel').textContent = video.channel;
+                
+                // Hide the overlay
+                overlay.classList.add('hidden'); 
+                overlay.style.display = 'none'; // Ensure it is hidden
+            }
         }
 
         function updateActivePlaylistItem(activeIndex) {
             document.querySelectorAll('.playlist-item').forEach((item, index) => {
-                item.classList.toggle('active', index === activeIndex);
+                item.classList.remove('active', 'border-green-400', 'bg-gray-700', 'bg-gray-600', 'bg-gray-800'); 
+                item.classList.add('bg-gray-800'); 
+
+                if (index === activeIndex) {
+                    item.classList.add('active', 'border-green-400', 'bg-gray-700');
+                    item.classList.remove('hover:bg-gray-700');
+                } else {
+                    item.classList.add('hover:bg-gray-700');
+                }
             });
         }
 
-        // --- 6. STICKY NOTES LOGIC (localStorage) ---
+        // --- 6. FIRESTORE NOTES LOGIC ---
+
         function saveNote() {
+            if (currentVideoIndex === -1 || !window.saveNoteToFirestore) return;
             const videoId = videoPlaylist[currentVideoIndex].id;
             const noteText = document.getElementById('note-textarea').value;
-            localStorage.setItem(`note_${videoId}`, noteText);
+            clearTimeout(window.saveTimeout);
+            window.saveTimeout = setTimeout(() => {
+                window.saveNoteToFirestore(videoId, noteText);
+            }, 500);
         }
 
-        function loadNote() {
-            // Don't try to load a note if no video is selected yet.
-            if (currentVideoIndex < 0 || currentVideoIndex >= videoPlaylist.length) return;
+        window.loadNote = async function() {
+            if (currentVideoIndex === -1 || !window.loadNoteFromFirestore) return;
+
+            const noteTextarea = document.getElementById('note-textarea');
+            const placeholderText = langStrings[currentLang].notesPlaceholder;
+            
+            noteTextarea.value = currentLang === 'en' ? 'Loading saved notes...' : 'সংরক্ষিত নোট লোড হচ্ছে...';
             
             const videoId = videoPlaylist[currentVideoIndex].id;
-            const savedNote = localStorage.getItem(`note_${videoId}`) || '';
-            document.getElementById('note-textarea').value = savedNote;
+            const savedNote = await window.loadNoteFromFirestore(videoId);
+            
+            noteTextarea.value = savedNote;
+            noteTextarea.placeholder = placeholderText; 
         }
+        
+        // Initial setup on load
+        document.addEventListener('DOMContentLoaded', () => {
+            updateUI('bn'); 
+        });
+
     </script>
 </body>
 </html>
-  
