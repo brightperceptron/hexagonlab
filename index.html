@@ -1,121 +1,403 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>HexagonLab</title>
-  <link rel="stylesheet" href="styles.css">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>HexagonLab | Digital Solutions Agency</title>
+    <!-- Load Tailwind CSS -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <!-- Load Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        /* Custom geometric background pattern to evoke the 'Hexagon' theme */
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0d1117; /* Dark background */
+        }
+        .section-bg {
+            background-color: #161b22;
+        }
+        .geometric-bg {
+            background-image: 
+                radial-gradient(#2d3748 1px, transparent 1px),
+                radial-gradient(#2d3748 1px, #161b22 1px);
+            background-size: 40px 40px;
+            background-position: 0 0, 20px 20px;
+        }
+    </style>
 </head>
-<body>
-  <!-- Dark/Light Mode Toggle -->
-  <div class="theme-toggle">
-    <input type="checkbox" id="theme-switch">
-    <label for="theme-switch" class="toggle-label">
-      <span class="toggle-icon"></span>
-    </label>
-  </div>
+<body class="text-gray-200">
 
-  <!-- Header -->
-  <header>
-    <div class="container">
-      <h1 class="logo">HexagonLab</h1>
-      <nav>
-        <ul>
-          <li><a href="#projects">Projects</a></li>
-          <li><a href="#research">Research</a></li>
-          <li><a href="#partners">Partners</a></li>
-          <li><a href="#contact">Contact</a></li>
-        </ul>
-      </nav>
-    </div>
-  </header>
+    <!-- Header & Navigation -->
+    <header class="sticky top-0 z-50 bg-black/80 backdrop-blur-md shadow-lg">
+        <nav class="container mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between h-16">
+                <!-- Logo -->
+                <a href="#home" class="text-2xl font-extrabold text-teal-400 tracking-wider flex items-center">
+                    <span class="text-4xl pr-1">&#x2B22;</span> HexagonLab
+                </a>
+                
+                <!-- Desktop Nav -->
+                <div class="hidden md:flex space-x-8">
+                    <a href="#home" class="text-sm font-medium hover:text-teal-400 transition duration-300">Home</a>
+                    <a href="#about" class="text-sm font-medium hover:text-teal-400 transition duration-300">About</a>
+                    <a href="#services" class="text-sm font-medium hover:text-teal-400 transition duration-300">Platforms</a>
+                    <a href="#portfolio" class="text-sm font-medium hover:text-teal-400 transition duration-300">Portfolio</a>
+                    <a href="#team" class="text-sm font-medium hover:text-teal-400 transition duration-300">Team</a>
+                    <a href="#contact" class="text-sm font-medium hover:text-teal-400 transition duration-300">Contact</a>
+                </div>
+                
+                <!-- Contact Button -->
+                <a href="#contact" class="hidden md:block bg-teal-600 hover:bg-teal-500 text-white px-4 py-2 rounded-lg text-sm font-semibold transition duration-300 shadow-md">
+                    Get Started
+                </a>
 
-  <!-- Hero Section -->
-  <section class="hero">
-    <div class="container">
-        <small>Under construction</small>
-      <h2>Innovating the Future</h2>
-      <p>Showcasing cutting-edge projects, research, and collaborations.</p>
-      <a href="#projects" class="btn">Explore Projects</a>
-    </div>
-  </section>
+                <!-- Mobile Menu Button (Placeholder for functionality) -->
+                <button class="md:hidden p-2 rounded-md hover:bg-gray-700 transition duration-150">
+                    <svg class="w-6 h-6 text-teal-400" fill="none" stroke="currentColor" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16m-7 6h7"></path></svg>
+                </button>
+            </div>
+        </nav>
+    </header>
 
-  <!-- Projects Section -->
-  <section id="projects" class="projects">
-    <div class="container">
-      <h2>Projects</h2>
-      <div class="project-grid">
-        <div class="project-card">
-          <img src="project1.jpg" alt="Project 1">
-          <h3>Project 1</h3>
-          <p>Description of Project 1.</p>
+    <main>
+        
+        <!-- Hero Section -->
+        <section id="home" class="geometric-bg pt-20 pb-32 text-center relative overflow-hidden">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 z-10 relative">
+                <h1 class="text-6xl sm:text-7xl lg:text-8xl font-extrabold text-transparent bg-clip-text bg-gradient-to-r from-teal-400 to-sky-500 leading-tight mb-4">
+                    The Future of Digital Reality.
+                </h1>
+                <p class="text-xl sm:text-2xl text-gray-400 max-w-3xl mx-auto mb-10">
+                    We're HexagonLab, the **Central R&D Engine** driving a specialized ecosystem of innovation platforms.
+                </p>
+                <div class="flex justify-center space-x-4">
+                    <a href="#services" class="px-8 py-3 text-lg font-semibold rounded-full bg-teal-600 hover:bg-teal-500 transition duration-300 shadow-xl shadow-teal-700/50 transform hover:scale-105">
+                        Explore Platforms
+                    </a>
+                    <a href="#contact" class="px-8 py-3 text-lg font-semibold rounded-full border border-gray-600 text-gray-200 hover:bg-gray-800 transition duration-300 transform hover:scale-105">
+                        Talk to an Expert
+                    </a>
+                </div>
+            </div>
+        </section>
+
+        <!-- About Us Section (Updated with Vision, Mission, and Core Function) -->
+        <section id="about" class="py-20 section-bg">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-5xl">
+                <h2 class="text-4xl font-bold text-center mb-4 text-teal-400">About HexagonLab</h2>
+                <p class="text-gray-500 text-center mb-12">The intellectual and strategic core driving specialized innovation.</p>
+                
+                <div class="grid md:grid-cols-2 gap-12 items-center">
+                    <div class="space-y-8">
+                        <p class="text-lg text-gray-300 leading-relaxed border-l-4 border-teal-500 pl-4 bg-gray-900/50 p-4 rounded-lg">
+                            <span class="font-bold text-teal-400 block mb-1">Vision Statement:</span>
+                            "To become the world's most agile innovation hub, where digital services and social good merge to build a smarter, more inclusive future."
+                        </p>
+                        <p class="text-lg text-gray-300 leading-relaxed border-l-4 border-teal-500 pl-4 bg-gray-900/50 p-4 rounded-lg">
+                            <span class="font-bold text-teal-400 block mb-1">Mission Statement:</span>
+                            "Empowering industries, communities, and individuals by transforming ideas into impactful, scalable solutions."
+                        </p>
+                        <p class="text-lg text-gray-300 leading-relaxed">
+                            As the **Parent Company** and **Central R&D Engine**, HexagonLab drives the comprehensive lifecycle of every idea—from **Idea Incubation** to **Knowledge Transfer** (generating real-life research papers) and final execution via our specialized platforms.
+                        </p>
+                    </div>
+                    <div>
+                        <img src="https://placehold.co/600x400/1e293b/94a3b8?text=Central+R%26D+Engine" alt="Abstract digital reality image" class="rounded-xl shadow-2xl transition duration-500 hover:shadow-teal-500/30">
+                    </div>
+                </div>
+
+                <!-- Team Section (Updated with new structure and titles) -->
+                <div id="team" class="mt-20">
+                    <h3 class="text-3xl font-bold text-center mb-10 text-teal-400">Meet Our Visionaries</h3>
+                    <div class="grid sm:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-8">
+                        
+                        <!-- ROW 1: Founder (Centered for emphasis) -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-teal-500 transition duration-300 text-center col-span-full xl:col-span-2 xl:col-start-2">
+                            <img src="https://placehold.co/100x100/374151/ffffff?text=IA" alt="MD IMTIAZ AHMED NAHID" class="rounded-full mx-auto mb-4 border-4 border-teal-500">
+                            <p class="text-2xl font-bold text-white">MD IMTIAZ AHMED NAHID</p>
+                            <p class="text-teal-400 text-base font-semibold">Founder, HexagonLab</p>
+                            <p class="text-gray-400 mt-3 text-sm">Expert in corporate strategy and autonomous systems integration.</p>
+                        </div>
+                        
+                        <div class="col-span-full">
+                            <h4 class="text-2xl font-semibold text-center mt-8 mb-4 text-sky-400 border-b border-gray-700 pb-2">Digital Radio Bangla Leadership</h4>
+                        </div>
+
+                        <!-- ROW 2: Digital Radio Bangla (Maliha, Anusha, Purbasha, Jannat Moon) -->
+                        <!-- Maliha Zaman -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-teal-500 transition duration-300 text-center">
+                            <img src="https://placehold.co/100x100/374151/ffffff?text=MZ" alt="Maliha Zaman" class="rounded-full mx-auto mb-4 border-4 border-teal-500">
+                            <p class="text-xl font-semibold text-white">Maliha Zaman</p>
+                            <p class="text-teal-400 text-sm">CTO, Digital Radio Bangla</p>
+                            <p class="text-gray-400 mt-3 text-sm">Leading all technology integration for the media platform.</p>
+                        </div>
+                        
+                        <!-- Anusha Rowshon (New Member) -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-teal-500 transition duration-300 text-center">
+                            <img src="https://placehold.co/100x100/374151/ffffff?text=AR" alt="Anusha Rowshon" class="rounded-full mx-auto mb-4 border-4 border-teal-500">
+                            <p class="text-xl font-semibold text-white">Anusha Rowshon</p>
+                            <p class="text-teal-400 text-sm">COO, Digital Radio Bangla</p>
+                            <p class="text-gray-400 mt-3 text-sm">Managing operational efficiency and content logistics.</p>
+                        </div>
+
+                        <!-- Sanzana Azad Purbasha (Purbasha) -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-teal-500 transition duration-300 text-center">
+                            <img src="https://placehold.co/100x100/374151/ffffff?text=SP" alt="Purbasha" class="rounded-full mx-auto mb-4 border-4 border-teal-500">
+                            <p class="text-xl font-semibold text-white">Sanzana Azad Purbasha</p>
+                            <p class="text-teal-400 text-sm">HR, Digital Radio Bangla</p>
+                            <p class="text-gray-400 mt-3 text-sm">Focusing on talent acquisition and internal team development.</p>
+                        </div>
+                        
+                        <!-- Jannat Moon (New Member, placed next as requested) -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-teal-500 transition duration-300 text-center">
+                            <img src="https://placehold.co/100x100/374151/ffffff?text=JM" alt="Jannat Moon" class="rounded-full mx-auto mb-4 border-4 border-teal-500">
+                            <p class="text-xl font-semibold text-white">Jannat Moon</p>
+                            <p class="text-teal-400 text-sm">Lead Voice Artist, Digital Radio Bangla</p>
+                            <p class="text-gray-400 mt-3 text-sm">The primary talent ensuring high-quality audio production.</p>
+                        </div>
+                        
+                        <div class="col-span-full">
+                            <h4 class="text-2xl font-semibold text-center mt-8 mb-4 text-sky-400 border-b border-gray-700 pb-2">Specialized Platform Teams & Core Services</h4>
+                        </div>
+
+                        <!-- Next Row: Asifur Zaman, Siyam, Hasan Al Banna, Abrar (REORDERED) -->
+                        
+                        <!-- 1. Asifur Zaman (HexagonLab) -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-teal-500 transition duration-300 text-center">
+                            <img src="https://placehold.co/100x100/374151/ffffff?text=AZ" alt="Asifur Zaman" class="rounded-full mx-auto mb-4 border-4 border-teal-500">
+                            <p class="text-xl font-semibold text-white">Kazi Asifur Zaman</p>
+                            <p class="text-teal-400 text-sm">Graphics Designer, HexagonLab</p>
+                            <p class="text-gray-400 mt-3 text-sm">Providing core design and visual assets for the parent company.</p>
+                        </div>
+
+                        <!-- 2. Siyam (Neurasoft) -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-teal-500 transition duration-300 text-center">
+                            <img src="https://placehold.co/100x100/374151/ffffff?text=MS" alt="Siyam" class="rounded-full mx-auto mb-4 border-4 border-teal-500">
+                            <p class="text-xl font-semibold text-white">MD Abdul Mutakabbir Siyam</p>
+                            <p class="text-teal-400 text-sm">Creative Editor, Neurasoft</p>
+                            <p class="text-gray-400 mt-3 text-sm">Enhancing visual and multimedia assets for digital services.</p>
+                        </div>
+                        
+                        <!-- 3. Hasan Al Banna (Isupport) -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-teal-500 transition duration-300 text-center">
+                            <img src="https://placehold.co/100x100/374151/ffffff?text=HB" alt="Hasan Al Banna" class="rounded-full mx-auto mb-4 border-4 border-teal-500">
+                            <p class="text-xl font-semibold text-white">Hasan Al Banna</p>
+                            <p class="text-teal-400 text-sm">Marketing Lead, Isupport</p>
+                            <p class="text-gray-400 mt-3 text-sm">Driving outreach and promotion for educational platforms.</p>
+                        </div>
+
+                        <!-- 4. Abrar (Isupport) -->
+                        <div class="bg-gray-800 p-6 rounded-xl shadow-lg border border-gray-700 hover:border-teal-500 transition duration-300 text-center">
+                            <img src="https://placehold.co/100x100/374151/ffffff?text=AB" alt="Abrar" class="rounded-full mx-auto mb-4 border-4 border-teal-500">
+                            <p class="text-xl font-semibold text-white">আবরার বিন জামিল</p>
+                            <p class="text-teal-400 text-sm">Member, Isupport</p>
+                            <p class="text-gray-400 mt-3 text-sm">Contributing to tech education and incubation projects.</p>
+                        </div>
+
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Services Section (Updated to reflect 5 Specialized Platforms) -->
+        <section id="services" class="py-20 geometric-bg">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-bold text-center mb-4 text-teal-400">Our Innovation Platforms</h2>
+                <p class="text-gray-500 text-center mb-12">Five specialized hubs delivering value across critical digital domains.</p>
+
+                <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10">
+                    
+                    <!-- Platform 1: Neurasoft -->
+                    <div class="bg-gray-800 p-8 rounded-2xl shadow-xl hover:shadow-teal-500/30 transition duration-500 border border-gray-700">
+                        <div class="flex items-center mb-4">
+                            <i data-lucide="monitor" class="w-8 h-8 text-teal-400 mr-3"></i>
+                            <h3 class="text-2xl font-semibold text-white">Neurasoft (Digital Services)</h3>
+                        </div>
+                        <p class="text-gray-400 mb-4 text-sm">The arm responsible for market-facing digital excellence and design.</p>
+                        <ul class="space-y-2 text-gray-300">
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> End-to-end SEO and Digital Marketing</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> Webapp Development and Custom Features</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> Content Creation (Audio/Video) and Design</li>
+                        </ul>
+                    </div>
+
+                    <!-- Platform 2: isupport -->
+                    <div class="bg-gray-800 p-8 rounded-2xl shadow-xl hover:shadow-teal-500/30 transition duration-500 border border-gray-700">
+                        <div class="flex items-center mb-4">
+                            <i data-lucide="graduation-cap" class="w-8 h-8 text-teal-400 mr-3"></i>
+                            <h3 class="text-2xl font-semibold text-white">isupport (Tech Education & Incubation)</h3>
+                        </div>
+                        <p class="text-gray-400 mb-4 text-sm">Empowering the next generation through tech incubation and project assistance.</p>
+                        <ul class="space-y-2 text-gray-300">
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> Project Mentoring (Robotics, AIoT, IoT)</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> Arduino and Embedded Systems Support</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> Internal idea development and execution unit</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Platform 3: Unidia -->
+                    <div class="bg-gray-800 p-8 rounded-2xl shadow-xl hover:shadow-teal-500/30 transition duration-500 border border-gray-700">
+                        <div class="flex items-center mb-4">
+                            <i data-lucide="hand-heart" class="w-8 h-8 text-teal-400 mr-3"></i>
+                            <h3 class="text-2xl font-semibold text-white">Unidia (Social Innovation)</h3>
+                        </div>
+                        <p class="text-gray-400 mb-4 text-sm">Focused on community enrichment and accessibility for a more inclusive future.</p>
+                        <ul class="space-y-2 text-gray-300">
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> Flagship innovation: **Madhyom** (Text-to-Braille Converter)</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> Enabling seamless communication</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> Grants, CSR collaborations, and licensing of accessibility innovations</li>
+                        </ul>
+                    </div>
+
+                    <!-- Platform 4: Nodelab -->
+                    <div class="bg-gray-800 p-8 rounded-2xl shadow-xl hover:shadow-teal-500/30 transition duration-500 border border-gray-700">
+                        <div class="flex items-center mb-4">
+                            <i data-lucide="microscope" class="w-8 h-8 text-teal-400 mr-3"></i>
+                            <h3 class="text-2xl font-semibold text-white">Nodelab (Virtual Research)</h3>
+                        </div>
+                        <p class="text-gray-400 mb-4 text-sm">An advanced virtual laboratory facilitating rapid R&D cycles and collaboration.</p>
+                        <ul class="space-y-2 text-gray-300">
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> Online experimentation and prototyping</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> Paid access to research tools and virtual labs</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> Launching new AI-driven collaboration tools (2027 Roadmap)</li>
+                        </ul>
+                    </div>
+                    
+                    <!-- Platform 5: Digital Radio Bangla -->
+                    <div class="bg-gray-800 p-8 rounded-2xl shadow-xl hover:shadow-teal-500/30 transition duration-500 border border-gray-700">
+                        <div class="flex items-center mb-4">
+                            <i data-lucide="podcast" class="w-8 h-8 text-teal-400 mr-3"></i>
+                            <h3 class="text-2xl font-semibold text-white">Digital Radio Bangla</h3>
+                        </div>
+                        <p class="text-gray-400 mb-4 text-sm">The media outreach platform for high-quality content production and distribution.</p>
+                        <ul class="space-y-2 text-gray-300">
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> High-quality audio book production</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> Various media initiatives and creative content</li>
+                            <li class="flex items-center"><i data-lucide="check-circle" class="w-4 h-4 text-teal-400 mr-2"></i> Media partnerships and content monetization</li>
+                        </ul>
+                    </div>
+                    
+                </div>
+            </div>
+        </section>
+
+        <!-- Portfolio Section (Updated with new platform names) -->
+        <section id="portfolio" class="py-20 section-bg">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8">
+                <h2 class="text-4xl font-bold text-center mb-4 text-teal-400">Recent Projects</h2>
+                <p class="text-gray-500 text-center mb-12">Showcasing the excellence of our dedicated platforms.</p>
+
+                <div class="grid sm:grid-cols-2 lg:grid-cols-3 gap-8">
+                    <!-- Portfolio Item 1 -->
+                    <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl group hover:shadow-teal-500/50 transition duration-300">
+                        <img src="https://placehold.co/600x400/111827/3b82f6?text=Web+App" alt="Web Development Project" class="w-full h-48 object-cover transition duration-500 group-hover:scale-105">
+                        <div class="p-6">
+                            <p class="text-sm font-medium text-teal-400">Neurasoft Platform</p>
+                            <h4 class="text-xl font-semibold mt-1">SaaS Platform Rebuild</h4>
+                            <a href="#" class="text-blue-400 hover:text-blue-300 text-sm mt-3 inline-block font-medium">View Case Study &rarr;</a>
+                        </div>
+                    </div>
+                    <!-- Portfolio Item 2 -->
+                    <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl group hover:shadow-teal-500/50 transition duration-300">
+                        <img src="https://placehold.co/600x400/111827/f59e0b?text=Design" alt="Graphic Design Project" class="w-full h-48 object-cover transition duration-500 group-hover:scale-105">
+                        <div class="p-6">
+                            <p class="text-sm font-medium text-teal-400">Neurasoft Platform</p>
+                            <h4 class="text-xl font-semibold mt-1">Corporate Rebranding Kit</h4>
+                            <a href="#" class="text-blue-400 hover:text-blue-300 text-sm mt-3 inline-block font-medium">View Case Study &rarr;</a>
+                        </div>
+                    </div>
+                    <!-- Portfolio Item 3 -->
+                    <div class="bg-gray-800 rounded-xl overflow-hidden shadow-xl group hover:shadow-teal-500/50 transition duration-300">
+                        <img src="https://placehold.co/600x400/111827/a78bfa?text=IoT+Project" alt="IOT Project" class="w-full h-48 object-cover transition duration-500 group-hover:scale-105">
+                        <div class="p-6">
+                            <p class="text-sm font-medium text-teal-400">isupport Platform</p>
+                            <h4 class="text-xl font-semibold mt-1">Smart City Sensor Network</h4>
+                            <a href="#" class="text-blue-400 hover:text-blue-300 text-sm mt-3 inline-block font-medium">View Case Study &rarr;</a>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <!-- Contact Form Section -->
+        <section id="contact" class="py-20 geometric-bg">
+            <div class="container mx-auto px-4 sm:px-6 lg:px-8 max-w-2xl">
+                <h2 class="text-4xl font-bold text-center mb-4 text-teal-400">Contact Us</h2>
+                <p class="text-gray-500 text-center mb-12">Let's discuss your next digital reality project.</p>
+
+                <div class="bg-gray-800 p-8 md:p-10 rounded-2xl shadow-2xl border border-gray-700">
+                    <!-- Netlify Form Integration -->
+                    <form name="contact" method="POST" data-netlify="true" class="space-y-6">
+                        <!-- Hidden field required by Netlify to identify the form submission -->
+                        <input type="hidden" name="form-name" value="contact" />
+                        
+                        <div>
+                            <label for="name" class="block text-sm font-medium text-gray-300 mb-2">Name</label>
+                            <input type="text" id="name" name="name" required class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-teal-500 focus:border-teal-500 transition duration-200" placeholder="Your Name">
+                        </div>
+                        <div>
+                            <label for="email" class="block text-sm font-medium text-gray-300 mb-2">Email</label>
+                            <input type="email" id="email" name="email" required class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-teal-500 focus:border-teal-500 transition duration-200" placeholder="your.email@example.com">
+                        </div>
+                        <div>
+                            <label for="review" class="block text-sm font-medium text-gray-300 mb-2">Review / Message</label>
+                            <textarea id="review" name="review" rows="4" required class="w-full px-4 py-3 bg-gray-700 border border-gray-600 rounded-lg text-white focus:ring-teal-500 focus:border-teal-500 transition duration-200" placeholder="How can we help you?"></textarea>
+                        </div>
+
+                        <!-- Rating Selector (as seen on the original site) -->
+                        <fieldset>
+                            <legend class="text-sm font-medium text-gray-300 mb-3">Rating (Optional)</legend>
+                            <div class="flex justify-between space-x-2">
+                                <label for="star-5" class="cursor-pointer text-2xl text-yellow-500 hover:text-yellow-400 transition duration-150" title="5 Stars">
+                                    &#9733; <input type="radio" id="star-5" name="rating" value="5" class="sr-only">
+                                </label>
+                                <label for="star-4" class="cursor-pointer text-2xl text-yellow-500 hover:text-yellow-400 transition duration-150" title="4 Stars">
+                                    &#9733; <input type="radio" id="star-4" name="rating" value="4" class="sr-only">
+                                </label>
+                                <label for="star-3" class="cursor-pointer text-2xl text-yellow-500 hover:text-yellow-400 transition duration-150" title="3 Stars">
+                                    &#9733; <input type="radio" id="star-3" name="rating" value="3" class="sr-only">
+                                </label>
+                                <label for="star-2" class="cursor-pointer text-2xl text-yellow-500 hover:text-yellow-400 transition duration-150" title="2 Stars">
+                                    &#9733; <input type="radio" id="star-2" name="rating" value="2" class="sr-only">
+                                </label>
+                                <label for="star-1" class="cursor-pointer text-2xl text-yellow-500 hover:text-yellow-400 transition duration-150" title="1 Star">
+                                    &#9733; <input type="radio" id="star-1" name="rating" value="1" class="sr-only">
+                                </label>
+                            </div>
+                        </fieldset>
+
+                        <button type="submit" class="w-full flex items-center justify-center px-6 py-3 border border-transparent text-base font-medium rounded-lg text-white bg-teal-600 hover:bg-teal-500 shadow-lg transition duration-300 transform hover:scale-[1.01]">
+                            Send Message
+                        </button>
+                    </form>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- Footer -->
+    <footer class="bg-black border-t border-gray-800 py-8">
+        <div class="container mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p class="text-gray-400 text-sm mb-4">
+                &copy; <span id="current-year"></span> HexagonLab. All rights reserved. | Built in Dhaka.
+            </p>
+            <div class="flex justify-center space-x-4">
+                <a href="#" class="text-gray-400 hover:text-teal-400 transition duration-300"><i data-lucide="twitter"></i></a>
+                <a href="#" class="text-gray-400 hover:text-teal-400 transition duration-300"><i data-lucide="facebook"></i></a>
+                <a href="#" class="text-gray-400 hover:text-teal-400 transition duration-300"><i data-lucide="linkedin"></i></a>
+            </div>
         </div>
-        <div class="project-card">
-          <img src="project2.jpg" alt="Project 2">
-          <h3>Project 2</h3>
-          <p>Description of Project 2.</p>
-        </div>
-        <!-- Add more project cards -->
-      </div>
-    </div>
-  </section>
+    </footer>
 
-  <!-- Research Section -->
-  <section id="research" class="research">
-    <div class="container">
-      <h2>Research & Writings</h2>
-      <div class="research-list">
-        <div class="research-item">
-          <h3>Research Title 1</h3>
-          <p>Summary of the research.</p>
-          <a href="#" class="btn">Read More</a>
-        </div>
-        <div class="research-item">
-          <h3>Research Title 2</h3>
-          <p>Summary of the research.</p>
-          <a href="#" class="btn">Read More</a>
-        </div>
-        <!-- Add more research items -->
-      </div>
-    </div>
-  </section>
+    <!-- Script to initialize Lucide icons and set current year -->
+    <script>
+        // Initialize Lucide Icons
+        lucide.createIcons();
 
-  <!-- Partners Section -->
-  <section id="partners" class="partners">
-    <div class="container">
-      <h2>Our Partners</h2>
-      <div class="partner-logos">
-        <img src="img/NeuraSoft.png" alt="Neurasoft">
-        <img src="img/HEXAGON LAB ash.png" alt="Unidia">
-        <img src="img/saf.jpg" alt="SafetyNotes">
-        <img src="img/DIGITAL RADIO BANGLA.png" alt="Digital Radio Bangla">
-        <img src="img/HEXAGON LAB ash.png" alt="M360">
-        <img src="img/intel.jpg" alt="Intelligence">
-        <img src="img/HEXAGON LAB ash.png" alt="VFR">
-      </div>
-    </div>
-  </section>
-
-  <!-- Footer -->
-  <footer id="contact">
-    <div class="container">
-      <div class="footer-content">
-        <div class="footer-section">
-          <h3>Contact Us</h3>
-          <p>Email: hexagonlab24@gmail.com</p>
-          <p>Phone: +123 456 7890</p>
-        </div>
-        <div class="footer-section">
-          <h3>Follow Us</h3>
-          <a href="#">LinkedIn</a>
-          <a href="#">Twitter</a>
-          <a href="#">GitHub</a>
-        </div>
-      </div>
-      <p class="copyright">&copy; 2025 HexagonLab. All rights reserved.</p>
-    </div>
-  </footer>
-
-  <script src="script.js"></script>
+        // Set the current year in the footer
+        document.getElementById('current-year').textContent = new Date().getFullYear();
+    </script>
 </body>
 </html>
