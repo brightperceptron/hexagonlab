@@ -1,0 +1,420 @@
+<!DOCTYPE html>
+<html lang="bn">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Cosmo Bangla - মহাবিশ্বের অসীম রহস্য</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&display=swap');
+        
+        body {
+            font-family: 'Hind Siliguri', sans-serif;
+            background-color: #050505;
+            scroll-behavior: smooth;
+        }
+
+        .glass-nav {
+            background: rgba(0, 0, 0, 0.85);
+            backdrop-filter: blur(16px);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.1);
+        }
+
+        .line-clamp-2 {
+            display: -webkit-box;
+            -webkit-line-clamp: 2;
+            -webkit-box-orient: vertical;
+            overflow: hidden;
+        }
+
+        @keyframes pulse-slow {
+            0%, 100% { opacity: 0.3; transform: scale(1); }
+            50% { opacity: 0.7; transform: scale(1.2); }
+        }
+
+        .animate-pulse-slow {
+            animation: pulse-slow 4s infinite ease-in-out;
+        }
+
+        .post-card:hover .post-img {
+            transform: scale(1.1);
+        }
+        
+        /* Custom Scrollbar */
+        ::-webkit-scrollbar {
+            width: 8px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #050505;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #312e81;
+            border-radius: 10px;
+        }
+        ::-webkit-scrollbar-thumb:hover {
+            background: #4338ca;
+        }
+    </style>
+</head>
+<body class="text-white selection:bg-indigo-500/40">
+
+    <!-- Background Stars Overlay -->
+    <div class="fixed inset-0 pointer-events-none opacity-40 -z-20">
+        <div class="absolute h-1 w-1 bg-white rounded-full top-10 left-10 animate-pulse-slow"></div>
+        <div class="absolute h-0.5 w-0.5 bg-white rounded-full top-40 right-20 animate-pulse"></div>
+        <div class="absolute h-1.5 w-1.5 bg-indigo-400 rounded-full bottom-20 left-1/4 animate-pulse-slow"></div>
+        <div class="absolute h-0.5 w-0.5 bg-blue-400 rounded-full top-1/3 right-1/4 animate-pulse"></div>
+        <div class="absolute h-1 w-1 bg-purple-500 rounded-full top-2/3 left-1/2 animate-pulse-slow"></div>
+    </div>
+
+    <!-- Navigation -->
+    <nav id="navbar" class="fixed w-full z-50 transition-all duration-500 py-5">
+        <div class="max-w-7xl mx-auto px-6 flex justify-between items-center">
+            <div class="flex items-center gap-2 group cursor-pointer" onclick="window.scrollTo(0,0)">
+                <div class="w-10 h-10  rounded-xl flex items-center justify-center transition-transform group-hover:rotate-12 overflow-hidden">
+                   <!-- Fallback icon if logo.png is missing -->
+                   <img src="img/logo.png" alt="CB" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=CB&backgroundColor=4338ca'" class="w-7 h-7 object-contain" >
+                </div>
+                <span class="text-2xl font-bold tracking-tight bg-clip-text text-transparent bg-gradient-to-r from-white to-gray-400">
+                    Cosmo <span class="text-indigo-400">Bangla</span>
+                </span>
+            </div>
+
+            <!-- Desktop Menu -->
+            <div class="hidden md:flex items-center gap-8">
+                <a href="#home" class="text-sm font-medium hover:text-indigo-400 transition-colors">হোম</a>
+                <a href="#features" class="text-sm font-medium hover:text-indigo-400 transition-colors">সৌরজগত</a>
+                <a href="#posts" class="text-sm font-medium hover:text-indigo-400 transition-colors">গ্যালারি</a>
+                <a href="#posts" class="text-sm font-medium hover:text-indigo-400 transition-colors">ব্লগ</a>
+                <a href="#newsletter-form" class="bg-indigo-600 text-white px-6 py-2.5 rounded-full text-sm font-bold hover:bg-white hover:text-black transition-all shadow-lg shadow-indigo-600/20">
+                    কন্ট্রিবিউট করুন
+                </a>
+            </div>
+
+            <!-- Mobile Menu Toggle -->
+            <button class="md:hidden p-2 hover:bg-white/5 rounded-lg" id="menu-btn">
+                <i data-lucide="menu" id="menu-icon"></i>
+            </button>
+        </div>
+    </nav>
+
+    <!-- Mobile Menu Overlay -->
+    <div id="mobile-menu" class="fixed inset-0 z-40 bg-black/95 backdrop-blur-2xl hidden flex-col justify-center items-center gap-8 text-2xl font-bold md:hidden">
+        <a href="#home" class="nav-link hover:text-indigo-400">হোম</a>
+        <a href="#features" class="nav-link hover:text-indigo-400">সৌরজগত</a>
+        <a href="#posts" class="nav-link hover:text-indigo-400">গ্যালারি</a>
+        <a href="#posts" class="nav-link hover:text-indigo-400">ব্লগ</a>
+        <button class="mt-4 bg-white text-black px-8 py-3 rounded-full text-lg">কন্ট্রিবিউট করুন</button>
+    </div>
+
+    <!-- Hero Section -->
+    <section id="home" class="relative pt-48 pb-24 px-6 overflow-hidden">
+        <div class="absolute top-0 left-1/2 -translate-x-1/2 w-full max-w-5xl h-[600px] bg-indigo-600/10 blur-[140px] rounded-full -z-10"></div>
+        <div class="max-w-7xl mx-auto text-center">
+            <div class="inline-flex items-center gap-2 px-4 py-1.5 rounded-full border border-white/10 bg-white/5 text-xs font-semibold mb-8 backdrop-blur-md animate-bounce">
+                <span class="flex h-2 w-2 rounded-full bg-indigo-500"></span>
+                নতুন আপডেট: জেমস ওয়েব টেলিস্কোপের নতুন ছবি
+            </div>
+            <h1 class="text-5xl md:text-8xl font-black mb-8 leading-[1.1] tracking-tight">
+                বাংলায় জানুন <br /> 
+                <span class="bg-clip-text text-transparent bg-gradient-to-r from-indigo-400 via-purple-400 to-pink-400">
+                    মহাবিশ্বের অসীম রহস্য
+                </span>
+            </h1>
+            <p class="max-w-2xl mx-auto text-gray-400 text-lg md:text-xl mb-12 leading-relaxed font-light">
+                কসমো বাংলা—যেখানে বিজ্ঞান ও মহাকাশ চর্চা হয় আপনার নিজের ভাষায়। ব্ল্যাক হোল থেকে শুরু করে দূরবর্তী গ্যালাক্সি, সবকিছুর বিস্তারিত তথ্য এখন এক জায়গায়।
+            </p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-6">
+                <a href="#posts" class="w-full sm:w-auto px-10 py-5 bg-indigo-600 hover:bg-indigo-700 rounded-2xl font-bold flex items-center justify-center gap-2 transition-all group shadow-xl shadow-indigo-600/30">
+                    শিখতে শুরু করুন <i data-lucide="arrow-down" class="w-5 h-5 group-hover:translate-y-1 transition-transform"></i>
+                </a>
+                <button class="w-full sm:w-auto px-10 py-5 bg-white/5 border border-white/10 hover:bg-white/10 rounded-2xl font-bold transition-all backdrop-blur-md">
+                    গ্যালারি দেখুন
+                </button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features -->
+    <section id="features" class="py-24 px-6 border-y border-white/5 bg-white/[0.02]">
+        <div class="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10">
+            <div class="p-10 rounded-[2.5rem] bg-white/5 border border-white/10 hover:border-indigo-500/50 transition-all group">
+                <div class="w-14 h-14 bg-indigo-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-indigo-500/20 transition-all">
+                    <i data-lucide="telescope" class="text-indigo-400 w-8 h-8"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">গভীর পর্যবেক্ষণ</h3>
+                <p class="text-gray-400 leading-relaxed">আধুনিক টেলিস্কোপ থেকে পাওয়া হাই-রেজোলিউশন ইমেজ ও ডেটার মাধ্যমে মহাবিশ্বকে চিনুন একদম কাছ থেকে।</p>
+            </div>
+            <div class="p-10 rounded-[2.5rem] bg-white/5 border border-white/10 hover:border-purple-500/50 transition-all group">
+                <div class="w-14 h-14 bg-purple-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-purple-500/20 transition-all">
+                    <i data-lucide="globe" class="text-purple-400 w-8 h-8"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">বাংলায় বিজ্ঞান</h3>
+                <p class="text-gray-400 leading-relaxed">জটিল মহাকাশ বিজ্ঞানকে সহজ বাংলায় আপনার কাছে পৌঁছে দেওয়া আমাদের মূল লক্ষ্য ও উদ্দেশ্য।</p>
+            </div>
+            <div class="p-10 rounded-[2.5rem] bg-white/5 border border-white/10 hover:border-pink-500/50 transition-all group">
+                <div class="w-14 h-14 bg-pink-500/10 rounded-2xl flex items-center justify-center mb-8 group-hover:scale-110 group-hover:bg-pink-500/20 transition-all">
+                    <i data-lucide="rocket" class="text-pink-400 w-8 h-8"></i>
+                </div>
+                <h3 class="text-2xl font-bold mb-4">ভবিষ্যৎ মিশন</h3>
+                <p class="text-gray-400 leading-relaxed">চন্দ্রযান থেকে আর্টেমিস—সব লেটেস্ট স্পেস মিশনের খবর এবং বৈজ্ঞানিক বিশ্লেষণ জানুন সবার আগে।</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Content Grid -->
+    <section id="posts" class="py-24 px-6">
+        <div class="max-w-7xl mx-auto">
+            <div class="flex flex-col md:flex-row justify-between items-center md:items-end mb-16 gap-4">
+                <div class="text-center md:text-left">
+                    <h2 class="text-4xl font-black mb-4 tracking-tight">সাম্প্রতিক কন্টেন্ট</h2>
+                    <p class="text-gray-400 max-w-md">মহাকাশ বিজ্ঞানের দুনিয়ায় প্রতিদিনের নতুন সব আবিষ্কার এবং তথ্যবহুল ব্লগ পোস্ট।</p>
+                </div>
+                <a href="#" class="flex items-center gap-2 text-indigo-400 hover:text-indigo-300 font-bold transition-colors bg-indigo-400/10 px-6 py-2 rounded-full">
+                    সব পোস্ট দেখুন <i data-lucide="arrow-right" class="w-4 h-4"></i>
+                </a>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-10" id="posts-container">
+                <!-- Posts are generated by JavaScript -->
+            </div>
+        </div>
+    </section>
+
+    <!-- CTA Section -->
+    <section class="py-24 px-6">
+        <div class="max-w-6xl mx-auto rounded-[4rem] bg-gradient-to-br from-indigo-900 via-indigo-700 to-purple-800 p-12 md:p-20 text-center relative overflow-hidden shadow-2xl shadow-indigo-500/20">
+            <div class="absolute top-0 right-0 w-96 h-96 bg-white/10 blur-[100px] rounded-full translate-x-1/2 -translate-y-1/2"></div>
+            <div class="absolute bottom-0 left-0 w-64 h-64 bg-black/20 blur-[80px] rounded-full -translate-x-1/2 translate-y-1/2"></div>
+            
+            <div id="form-container" class="relative z-10">
+                <h2 class="text-4xl md:text-6xl font-black mb-8 leading-tight italic">"আমরা সবাই নক্ষত্রের ধূলিকণা"</h2>
+                <p class="text-indigo-100 text-xl mb-12 max-w-2xl mx-auto font-light leading-relaxed">
+                    কার্ল সেগানের এই বিখ্যাত উক্তি আমাদের মনে করিয়ে দেয় আমাদের অস্তিত্বের উৎস। আমাদের নিউজলেটারে যুক্ত হয়ে মহাকাশ যাত্রায় সঙ্গী হোন।
+                </p>
+                
+                <form id="newsletter-form" name="newsletter" method="POST" data-netlify="true" class="flex flex-col sm:flex-row gap-4 max-w-xl mx-auto bg-black/20 p-2 rounded-3xl border border-white/10 backdrop-blur-xl">
+                    <input type="hidden" name="form-name" value="newsletter" />
+                    <input type="email" name="email" required placeholder="আপনার ইমেইল অ্যাড্রেস" class="flex-1 bg-transparent border-none rounded-2xl px-6 py-4 focus:outline-none placeholder:text-indigo-200 text-white" />
+                    <button type="submit" id="submit-btn" class="bg-white text-indigo-700 px-10 py-4 rounded-2xl font-black hover:bg-indigo-50 transition-all flex items-center justify-center whitespace-nowrap">
+                        যুক্ত হোন
+                    </button>
+                </form>
+            </div>
+
+            <div id="success-msg" class="relative z-10 hidden py-10 scale-in animate-in">
+                <div class="w-24 h-24 bg-white/20 rounded-full flex items-center justify-center mx-auto mb-8 backdrop-blur-lg border border-white/30">
+                    <i data-lucide="sparkles" class="w-12 h-12 text-white"></i>
+                </div>
+                <h2 class="text-5xl font-black mb-4">স্বাগতম!</h2>
+                <p class="text-indigo-100 text-xl font-light">আপনি এখন কসমো বাংলা পরিবারের সদস্য। প্রথম মেইলটি খুব শীঘ্রই পাবেন।</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer class="py-20 px-6 border-t border-white/5 bg-black/40">
+        <div class="max-w-7xl mx-auto">
+            <div class="grid grid-cols-1 md:grid-cols-4 gap-12 mb-16">
+                <div class="col-span-1 md:col-span-2">
+                    <div class="flex items-center gap-3 mb-6">
+                        <div class="w-10 h-10  rounded-xl flex items-center justify-center">
+                            <img src="img/logo.png" alt="CB" onerror="this.src='https://api.dicebear.com/7.x/initials/svg?seed=CB&backgroundColor=4338ca'" class="w-6 h-6 object-contain" >
+                        </div>
+                        <span class="text-2xl font-black">Cosmo Bangla</span>
+                    </div>
+                    <p class="text-gray-500 max-w-sm mb-8 font-light">কসমো বাংলা একটি উন্মুক্ত প্ল্যাটফর্ম যা সাধারণ মানুষের কাছে মহাকাশ বিজ্ঞান এবং প্রযুক্তির খবর পৌঁছে দেওয়ার লক্ষ্যে কাজ করে।</p>
+                    <div class="flex gap-4">
+                        <a href="https://www.facebook.com/profile.php?id=61585902912113" class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center hover:bg-indigo-600 transition-all group">
+                            <i data-lucide="facebook" class="w-5 h-5 text-gray-400 group-hover:text-white"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center hover:bg-red-600 transition-all group">
+                            <i data-lucide="youtube" class="w-5 h-5 text-gray-400 group-hover:text-white"></i>
+                        </a>
+                        <a href="#" class="w-12 h-12 bg-white/5 rounded-full flex items-center justify-center hover:bg-blue-400 transition-all group">
+                            <i data-lucide="twitter" class="w-5 h-5 text-gray-400 group-hover:text-white"></i>
+                        </a>
+                    </div>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-6">লিঙ্ক</h4>
+                    <ul class="flex flex-col gap-4 text-gray-500">
+                        <li><a href="#" class="hover:text-indigo-400 transition-colors">আমাদের সম্পর্কে</a></li>
+                        <li><a href="#" class="hover:text-indigo-400 transition-colors">সৌরজগত গাইড</a></li>
+                        <li><a href="#" class="hover:text-indigo-400 transition-colors">গোপনীয়তা নীতি</a></li>
+                        <li><a href="#" class="hover:text-indigo-400 transition-colors">যোগাযোগ</a></li>
+                    </ul>
+                </div>
+                <div>
+                    <h4 class="text-lg font-bold mb-6">ক্যাটাগরি</h4>
+                    <ul class="flex flex-col gap-4 text-gray-500">
+                        <li><a href="#" class="hover:text-indigo-400 transition-colors">মহাকাশ বিজ্ঞান</a></li>
+                        <li><a href="#" class="hover:text-indigo-400 transition-colors">রকেট সায়েন্স</a></li>
+                        <li><a href="#" class="hover:text-indigo-400 transition-colors">অ্যাস্ট্রোফোটোগ্রাফি</a></li>
+                        <li><a href="#" class="hover:text-indigo-400 transition-colors">ভবিষ্যৎ প্রযুক্তি</a></li>
+                    </ul>
+                </div>
+            </div>
+            <div class="pt-10 border-t border-white/5 flex flex-col md:flex-row justify-between items-center gap-4 text-gray-600 text-sm">
+                <p>© ২০২৬ কসমো বাংলা। মহাকাশ বিজ্ঞানে সমৃদ্ধ বাংলাদেশ।</p>
+                <button onclick="window.scrollTo(0,0)" class="flex items-center gap-2 hover:text-white transition-colors">
+                    উপরে যান <i data-lucide="arrow-up-circle" class="w-4 h-4"></i>
+                </button>
+            </div>
+        </div>
+    </footer>
+
+    <script>
+        // Post Data Array
+        const posts = [
+            {
+                title: "ব্ল্যাক হোল: মহাকাশের রহস্যময় দানব",
+                desc: "কৃষ্ণগহ্বর বা ব্ল্যাক হোল কেন আলোকেও শুষে নেয়? জানুন এর পেছনের জটিল পদার্থবিজ্ঞান সহজ কথায়।",
+                category: "মহাকাশ বিজ্ঞান",
+                img: "https://images.unsplash.com/photo-1462331940025-496dfbfc7564?auto=format&fit=crop&q=80&w=800",
+                time: "১০ মিনিট আগে"
+            },
+            {
+                title: "মঙ্গল গ্রহে প্রাণের সন্ধানে: কিউরিওসিটি রোভার",
+                desc: "নাসার কিউরিওসিটি রোভার মঙ্গল গ্রহে লাল মাটির নিচে কী খুঁজছে? আমাদের প্রতিবেশী গ্রহে প্রাণের সম্ভাবনা কতটুকু?",
+                category: "গ্রহ-উপগ্রহ",
+                img: "https://images.unsplash.com/photo-1614728894747-a83421e2b9c9?auto=format&fit=crop&q=80&w=800",
+                time: "১ ঘণ্টা আগে"
+            },
+            {
+                title: "সৌরজগতের সবচেয়ে বড় চাঁদ: গ্যানিমেড",
+                desc: "বৃহস্পতির চাঁদ গ্যানিমেড সম্পর্কে এমন কিছু তথ্য যা শুনলে আপনি অবাক হবেন। এর নিজেরও কি চৌম্বক ক্ষেত্র আছে?",
+                category: "সৌরজগত",
+                img: "https://images.unsplash.com/photo-1614732414444-096e5f1122d5?auto=format&fit=crop&q=80&w=800",
+                time: "৫ ঘণ্টা আগে"
+            },
+            {
+                title: "জেমস ওয়েব বনাম হাবল: কে সেরা?",
+                desc: "টেলিস্কোপের দুনিয়ায় কে বেশি শক্তিশালী? হাবল যা দেখতে পায়নি জেমস ওয়েব কি তা খুঁজে পেল?",
+                category: "প্রযুক্তি",
+                img: "https://images.unsplash.com/photo-1446776811953-b23d57bd21aa?auto=format&fit=crop&q=80&w=800",
+                time: "গতকাল"
+            },
+            {
+                title: "মহাকাশে প্রথম বাংলাদেশি নভোচারী?",
+                desc: "বাংলাদেশ কি পারবে তার নিজস্ব মহাকাশচারী পাঠাতে? গগনযান মিশনে ভারতের সাথে সহযোগিতার সম্ভাবনা কতটুকু?",
+                category: "বাংলাদেশ",
+                img: "https://images.unsplash.com/photo-1454789548928-9efd52dc4031?auto=format&fit=crop&q=80&w=800",
+                time: "২ দিন আগে"
+            },
+            {
+                title: "অ্যান্ড্রোমিডা গ্যালাক্সি: আমাদের ভবিষ্যৎ ঠিকানা?",
+                desc: "৪০০ কোটি বছর পর আমাদের মিল্কিওয়ে গ্যালাক্সি আর অ্যান্ড্রোমিডা সংঘর্ষে লিপ্ত হবে। তখন পৃথিবীর কী হবে?",
+                category: "গ্যালাক্সি",
+                img: "https://images.unsplash.com/photo-1465101162946-4377e57745c3?auto=format&fit=crop&q=80&w=800",
+                time: "৩ দিন আগে"
+            }
+        ];
+
+        // Function to render posts
+        function renderPosts() {
+            const container = document.getElementById('posts-container');
+            container.innerHTML = posts.map(post => `
+                <div class="post-card group cursor-pointer rounded-[2.5rem] overflow-hidden bg-white/5 border border-white/10 hover:shadow-2xl hover:shadow-indigo-500/10 transition-all duration-500 flex flex-col">
+                    <div class="relative h-64 overflow-hidden">
+                        <img src="${post.img}" class="post-img w-full h-full object-cover transition-transform duration-700" loading="lazy" />
+                        <div class="absolute top-6 left-6"><span class="px-4 py-1.5 rounded-xl bg-black/60 backdrop-blur-xl text-xs font-bold border border-white/10 uppercase tracking-widest text-indigo-300">${post.category}</span></div>
+                        <div class="absolute inset-0 bg-gradient-to-t from-black/90 via-black/20 to-transparent"></div>
+                        <div class="absolute bottom-6 left-6 flex gap-3">
+                            <div class="p-3 bg-indigo-600 rounded-2xl shadow-lg shadow-indigo-600/40 group-hover:scale-110 transition-transform"><i data-lucide="play" class="w-5 h-5 fill-white text-white"></i></div>
+                        </div>
+                    </div>
+                    <div class="p-8 flex flex-col flex-1">
+                        <h3 class="text-2xl font-bold mb-4 group-hover:text-indigo-400 transition-colors leading-tight">${post.title}</h3>
+                        <p class="text-gray-400 text-sm mb-8 line-clamp-2 font-light leading-relaxed">${post.desc}</p>
+                        <div class="mt-auto flex items-center justify-between pt-6 border-t border-white/5">
+                            <span class="text-xs text-gray-500 flex items-center gap-1.5"><i data-lucide="clock" class="w-3.5 h-3.5"></i> ${post.time}</span>
+                            <div class="flex gap-2">
+                                <button class="p-2 text-white/30 hover:text-indigo-400 transition-colors"><i data-lucide="bookmark" class="w-5 h-5"></i></button>
+                                <button class="p-2 text-white/30 hover:text-indigo-400 transition-colors"><i data-lucide="share-2" class="w-5 h-5"></i></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            `).join('');
+            lucide.createIcons();
+        }
+
+        // Initialize Lucide Icons
+        lucide.createIcons();
+        renderPosts();
+
+        // Navbar Scroll Effect
+        const navbar = document.getElementById('navbar');
+        window.addEventListener('scroll', () => {
+            if (window.scrollY > 80) {
+                navbar.classList.add('glass-nav');
+                navbar.classList.remove('py-5');
+                navbar.classList.add('py-3');
+            } else {
+                navbar.classList.remove('glass-nav');
+                navbar.classList.add('py-5');
+                navbar.classList.remove('py-3');
+            }
+        });
+
+        // Mobile Menu Toggle
+        const menuBtn = document.getElementById('menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        const menuIcon = document.getElementById('menu-icon');
+        let isMenuOpen = false;
+
+        menuBtn.addEventListener('click', () => {
+            isMenuOpen = !isMenuOpen;
+            if (isMenuOpen) {
+                mobileMenu.classList.remove('hidden');
+                mobileMenu.classList.add('flex');
+                document.body.style.overflow = 'hidden';
+                menuIcon.setAttribute('data-lucide', 'x');
+            } else {
+                mobileMenu.classList.add('hidden');
+                mobileMenu.classList.remove('flex');
+                document.body.style.overflow = 'auto';
+                menuIcon.setAttribute('data-lucide', 'menu');
+            }
+            lucide.createIcons();
+        });
+
+        // Form Submission (Netlify Support)
+        const newsletterForm = document.getElementById('newsletter-form');
+        const formContainer = document.getElementById('form-container');
+        const successMsg = document.getElementById('success-msg');
+        const submitBtn = document.getElementById('submit-btn');
+
+        newsletterForm.addEventListener('submit', (e) => {
+            e.preventDefault();
+            
+            submitBtn.disabled = true;
+            submitBtn.innerHTML = '<div class="h-6 w-6 border-2 border-indigo-200/30 border-t-white rounded-full animate-spin"></div>';
+
+            const formData = new FormData(newsletterForm);
+            
+            // Simulating API call if not on Netlify
+            setTimeout(() => {
+                formContainer.classList.add('opacity-0');
+                setTimeout(() => {
+                    formContainer.classList.add('hidden');
+                    successMsg.classList.remove('hidden');
+                }, 300);
+            }, 1500);
+        });
+
+        // Smooth nav links for mobile
+        document.querySelectorAll('.nav-link').forEach(link => {
+            link.addEventListener('click', () => {
+                mobileMenu.classList.add('hidden');
+                document.body.style.overflow = 'auto';
+                isMenuOpen = false;
+                menuIcon.setAttribute('data-lucide', 'menu');
+                lucide.createIcons();
+            });
+        });
+    </script>
+</body>
+</html>
