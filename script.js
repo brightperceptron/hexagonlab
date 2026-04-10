@@ -1,31 +1,71 @@
-// Dark/Light Mode Toggle
-const themeSwitch = document.getElementById('theme-switch');
-const body = document.body;
+const navToggle = document.getElementById('nav-toggle');
+const sections = document.querySelectorAll('main section[id]');
+const navLinks = document.querySelectorAll('header nav a, #mobile-menu a');
+const revealElements = document.querySelectorAll('.reveal');
 
-// Check for saved theme in localStorage
-const savedTheme = localStorage.getItem('theme');
-if (savedTheme) {
-  body.setAttribute('data-theme', savedTheme);
-  themeSwitch.checked = savedTheme === 'light';
+function updateActiveNav() {
+  const offset = window.scrollY + window.innerHeight * 0.35;
+  let activeId = sections[0]?.id;
+
+  sections.forEach((section) => {
+    if (offset >= section.offsetTop) {
+      activeId = section.id;
+    }
+  });
+
+  navLinks.forEach((link) => {
+    link.classList.toggle('active', link.getAttribute('href') === `#${activeId}`);
+  });
 }
 
-// Toggle theme on switch click
-themeSwitch.addEventListener('change', () => {
-  if (themeSwitch.checked) {
-    body.setAttribute('data-theme', 'light');
-    localStorage.setItem('theme', 'light');
-  } else {
-    body.setAttribute('data-theme', 'dark');
-    localStorage.setItem('theme', 'dark');
-  }
+const revealObserver = new IntersectionObserver(
+  (entries) => {
+    entries.forEach((entry) => {
+      if (entry.isIntersecting) {
+        entry.target.classList.add('reveal-active');
+        revealObserver.unobserve(entry.target);
+      }
+    });
+  },
+  { threshold: 0.2 }
+);
+
+revealElements.forEach((element) => revealObserver.observe(element));
+
+navToggle?.addEventListener('click', () => {
+  document.body.toggleAttribute('data-menu-open');
+  const expanded = navToggle.getAttribute('aria-expanded') === 'true';
+  navToggle.setAttribute('aria-expanded', String(!expanded));
 });
 
-// Smooth scrolling for anchor links
-document.querySelectorAll('a[href^="#"]').forEach(anchor => {
-  anchor.addEventListener('click', function (e) {
-    e.preventDefault();
-    document.querySelector(this.getAttribute('href')).scrollIntoView({
-      behavior: 'smooth'
-    });
+navLinks.forEach((link) => {
+  if (!link.hash) return;
+  link.addEventListener('click', (event) => {
+    event.preventDefault();
+    const target = document.querySelector(link.hash);
+    if (target) {
+      target.scrollIntoView({ behavior: 'smooth', block: 'start' });
+    }
+    document.body.removeAttribute('data-menu-open');
+    navToggle?.setAttribute('aria-expanded', 'false');
   });
+});
+
+window.addEventListener('scroll', updateActiveNav);
+window.addEventListener('load', () => {
+  if (window.lucide) {
+    lucide.createIcons();
+  }
+  const yearElement = document.getElementById('current-year');
+  if (yearElement) {
+    yearElement.textContent = new Date().getFullYear();
+  }
+  updateActiveNav();
+
+  const preloader = document.getElementById('preloader');
+  if (preloader) {
+    window.setTimeout(() => {
+      preloader.classList.add('preloader-hidden');
+    }, 300);
+  }
 });
