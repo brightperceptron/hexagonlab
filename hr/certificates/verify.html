@@ -1,0 +1,191 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Verify Certificate - HexagonLab</title>
+    <link rel="icon" href="../../img/teams/hexagonlab.svg">
+    <meta name="description" content="Verify the authenticity of certificates issued by HexagonLab.">
+    <link rel="stylesheet" href="../../style.css">
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <style>
+        .verification-form {
+            max-width: 500px;
+            margin: 0 auto;
+            padding: 2rem;
+            background: var(--surface);
+            border-radius: 12px;
+            box-shadow: var(--shadow);
+        }
+        .result-card {
+            margin-top: 2rem;
+            padding: 1.5rem;
+            border-radius: 8px;
+            display: none;
+        }
+        .valid {
+            background: rgba(34, 197, 94, 0.1);
+            border: 1px solid rgba(34, 197, 94, 0.2);
+        }
+        .invalid {
+            background: rgba(239, 68, 68, 0.1);
+            border: 1px solid rgba(239, 68, 68, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div id="preloader" class="preloader" aria-hidden="false">
+        <div class="preloader-ring" aria-hidden="true"></div>
+        <div class="preloader-copy">
+            <span class="preloader-title">HexagonLab</span>
+            <span class="preloader-text">Verifying Certificate...</span>
+        </div>
+    </div>
+
+    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex justify-between items-center py-4">
+                <div class="flex items-center">
+                    <img src="../../img/teams/hexagonlab.svg" alt="HexagonLab" class="h-8 w-8 mr-2">
+                    <span class="text-xl font-bold text-gray-900">HexagonLab</span>
+                </div>
+                <nav class="hidden md:flex space-x-8">
+                    <a href="../../index.html" class="text-gray-700 hover:text-yellow-600 transition-colors">Home</a>
+                    <a href="#" class="text-gray-700 hover:text-yellow-600 transition-colors">About</a>
+                    <a href="#" class="text-gray-700 hover:text-yellow-600 transition-colors">Services</a>
+                    <a href="#" class="text-gray-700 hover:text-yellow-600 transition-colors">Contact</a>
+                </nav>
+            </div>
+        </div>
+    </header>
+
+    <main class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
+        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center mb-8">
+                <h1 class="text-4xl font-bold text-gray-900 mb-4">Certificate Verification</h1>
+                <p class="text-lg text-gray-600">Enter your certificate verification code to check its authenticity</p>
+            </div>
+
+            <div class="verification-form">
+                <form id="verificationForm">
+                    <div class="mb-6">
+                        <label for="verificationCode" class="block text-sm font-medium text-gray-700 mb-2">
+                            Verification Code
+                        </label>
+                        <input
+                            type="text"
+                            id="verificationCode"
+                            name="verificationCode"
+                            required
+                            placeholder="Enter your verification code"
+                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-colors"
+                        >
+                    </div>
+                    <button
+                        type="submit"
+                        class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
+                    >
+                        <i data-lucide="search" class="w-5 h-5 mr-2"></i>
+                        Verify Certificate
+                    </button>
+                </form>
+
+                <div id="resultCard" class="result-card">
+                    <div class="flex items-center mb-4">
+                        <i id="resultIcon" data-lucide="check-circle" class="w-6 h-6 mr-2"></i>
+                        <h3 id="resultTitle" class="text-lg font-semibold">Certificate Verified</h3>
+                    </div>
+                    <div id="resultDetails" class="text-gray-700">
+                        <!-- Certificate details will be populated here -->
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <footer class="bg-gray-900 text-white py-8">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+            <p>&copy; 2024 HexagonLab. All rights reserved.</p>
+        </div>
+    </footer>
+
+    <script>
+        // Sample certificate data (in a real application, this would come from a backend)
+        const certificates = {
+            'HL-2024-001': {
+                valid: true,
+                details: {
+                    certificateNumber: 'HL-2024-001',
+                    recipient: 'John Doe',
+                    course: 'Advanced AI Development',
+                    issueDate: '2024-01-15',
+                    expiryDate: '2026-01-15'
+                }
+            },
+            'HL-2024-002': {
+                valid: true,
+                details: {
+                    certificateNumber: 'HL-2024-002',
+                    recipient: 'Jane Smith',
+                    course: 'IoT Solutions',
+                    issueDate: '2024-02-20',
+                    expiryDate: '2026-02-20'
+                }
+            },
+            'HL-2024-003': {
+                valid: false,
+                reason: 'Certificate has been revoked'
+            }
+        };
+
+        document.getElementById('verificationForm').addEventListener('submit', function(e) {
+            e.preventDefault();
+            const code = document.getElementById('verificationCode').value.trim().toUpperCase();
+            const resultCard = document.getElementById('resultCard');
+            const resultIcon = document.getElementById('resultIcon');
+            const resultTitle = document.getElementById('resultTitle');
+            const resultDetails = document.getElementById('resultDetails');
+
+            const cert = certificates[code];
+
+            if (cert && cert.valid) {
+                resultCard.className = 'result-card valid';
+                resultIcon.setAttribute('data-lucide', 'check-circle');
+                resultTitle.textContent = 'Certificate Verified';
+                resultDetails.innerHTML = `
+                    <p><strong>Certificate Number:</strong> ${cert.details.certificateNumber}</p>
+                    <p><strong>Recipient:</strong> ${cert.details.recipient}</p>
+                    <p><strong>Course:</strong> ${cert.details.course}</p>
+                    <p><strong>Issue Date:</strong> ${cert.details.issueDate}</p>
+                    <p><strong>Expiry Date:</strong> ${cert.details.expiryDate}</p>
+                `;
+            } else if (cert && !cert.valid) {
+                resultCard.className = 'result-card invalid';
+                resultIcon.setAttribute('data-lucide', 'x-circle');
+                resultTitle.textContent = 'Certificate Invalid';
+                resultDetails.innerHTML = `<p>${cert.reason}</p>`;
+            } else {
+                resultCard.className = 'result-card invalid';
+                resultIcon.setAttribute('data-lucide', 'x-circle');
+                resultTitle.textContent = 'Certificate Not Found';
+                resultDetails.innerHTML = '<p>The verification code entered does not match any certificate in our records.</p>';
+            }
+
+            resultCard.style.display = 'block';
+            // Re-initialize Lucide icons for the new content
+            lucide.createIcons();
+        });
+
+        // Preloader
+        window.addEventListener('load', function() {
+            setTimeout(() => {
+                document.getElementById('preloader').classList.add('preloader-hidden');
+            }, 1000);
+        });
+
+        // Initialize Lucide icons
+        lucide.createIcons();
+    </script>
+</body>
+</html>
