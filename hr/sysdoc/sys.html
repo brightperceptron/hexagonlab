@@ -1,0 +1,1008 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>HexagonLab Certificate Editor</title>
+  <style>
+    :root {
+      --ink: #111827;
+      --text: #253044;
+      --muted: #667085;
+      --line: #d8dee8;
+      --paper: #ffffff;
+      --cyan: #06b6d4;
+      --gold: #d99a19;
+      --gold-soft: #f2c66d;
+      --navy: #0f172a;
+      --slate: #334155;
+      --charcoal: #020617;
+    }
+
+    * { box-sizing: border-box; }
+
+    body {
+      margin: 0;
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #eef1f5;
+      color: var(--ink);
+    }
+
+    .editor-bar {
+      position: sticky;
+      top: 0;
+      z-index: 50;
+      background: rgba(6, 11, 25, 0.97);
+      color: white;
+      padding: 14px 24px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.18);
+    }
+
+    .editor-title {
+      display: flex;
+      flex-direction: column;
+      gap: 2px;
+    }
+
+    .editor-title strong {
+      font-size: 15px;
+      letter-spacing: 0.4px;
+    }
+
+    .editor-title span {
+      font-size: 12px;
+      color: #cbd5e1;
+    }
+
+    .actions {
+      display: flex;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+      gap: 10px;
+      align-items: center;
+    }
+
+    button {
+      border: 0;
+      border-radius: 8px;
+      padding: 10px 14px;
+      font-weight: 700;
+      cursor: pointer;
+      font-size: 13px;
+    }
+
+    .color-tool {
+      display: inline-flex;
+      align-items: center;
+      gap: 7px;
+      color: #e5e7eb;
+      font-size: 12px;
+      font-weight: 700;
+      background: rgba(255,255,255,0.06);
+      border: 1px solid rgba(255,255,255,0.10);
+      padding: 7px 9px;
+      border-radius: 8px;
+    }
+
+    .color-tool input {
+      width: 28px;
+      height: 28px;
+      padding: 0;
+      border: 0;
+      background: transparent;
+      cursor: pointer;
+    }
+
+    .selected-edit-element {
+      outline: 2px solid rgba(6,182,212,0.85) !important;
+      outline-offset: 3px;
+      box-shadow: 0 0 0 4px rgba(6,182,212,0.10);
+    }
+
+    .btn-gold {
+      background: linear-gradient(135deg, var(--navy), var(--cyan));
+      color: white;
+    }
+
+    .btn-dark {
+      background: #1f2937;
+      color: white;
+      border: 1px solid rgba(255,255,255,0.12);
+    }
+
+    .workspace {
+      padding: 28px 16px 48px;
+      overflow-x: auto;
+    }
+
+    .page {
+      width: 210mm;
+      height: 297mm;
+      margin: 0 auto;
+      background:
+        radial-gradient(circle at 16% 14%, rgba(245,158,11,0.105), transparent 24%),
+        radial-gradient(circle at 86% 82%, rgba(15,23,42,0.075), transparent 29%),
+        linear-gradient(120deg, rgba(6,182,212,0.035), transparent 32%),
+        linear-gradient(135deg, #ffffff 0%, #f8fafc 52%, #ffffff 100%);
+      position: relative;
+      box-shadow: 0 24px 70px rgba(2,6,23,0.16);
+      padding: 18mm 18mm 16mm;
+      overflow: hidden;
+      border-radius: 8px;
+    }
+
+    .page::before {
+      content: "";
+      position: absolute;
+      inset: 7mm;
+      border: 1.1px solid rgba(17,24,39,0.42);
+      box-shadow:
+        inset 0 0 0 1px rgba(217,154,25,0.20),
+        inset 0 0 0 4px rgba(255,255,255,0.72),
+        inset 0 0 48px rgba(6,182,212,0.045);
+      pointer-events: none;
+      z-index: 20;
+    }
+
+    .page::after {
+      content: "";
+      position: absolute;
+      inset: 11mm;
+      border: 1px solid rgba(148,163,184,0.18);
+      background:
+        linear-gradient(90deg, transparent 0 49.6%, rgba(15,23,42,0.035) 49.8% 50.2%, transparent 50.4% 100%),
+        linear-gradient(0deg, transparent 0 49.65%, rgba(245,158,11,0.04) 49.85% 50.15%, transparent 50.35% 100%);
+      pointer-events: none;
+      z-index: 2;
+    }
+
+    .philosophy-graphic {
+      position: absolute;
+      inset: 6mm;
+      z-index: 3;
+      pointer-events: none;
+      color: var(--navy);
+      opacity: 1;
+    }
+
+    .philosophy-graphic svg {
+      width: 100%;
+      height: 100%;
+      display: block;
+    }
+
+    .philosophy-graphic .thread,
+    .philosophy-graphic .hex-line,
+    .philosophy-graphic .node-link {
+      fill: none;
+      stroke-linecap: round;
+      stroke-linejoin: round;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .philosophy-graphic .hex-line {
+      stroke: rgba(245,158,11,0.29);
+      stroke-width: 12;
+    }
+
+    .philosophy-graphic .node-link {
+      stroke-width: 3.6;
+    }
+
+    .philosophy-graphic .node-link.dark { stroke: rgba(17,24,39,0.30); }
+    .philosophy-graphic .node-link.gold { stroke: rgba(245,158,11,0.34); }
+
+    .philosophy-graphic .fine {
+      fill: none;
+      stroke: rgba(15,23,42,0.085);
+      stroke-width: 0.85;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .philosophy-graphic .fine.gold {
+      stroke: rgba(245,158,11,0.13);
+    }
+
+    .philosophy-graphic .premium-hex {
+      fill: none;
+      stroke: rgba(15,23,42,0.06);
+      stroke-width: 1.1;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .philosophy-graphic circle {
+      stroke: none;
+      vector-effect: non-scaling-stroke;
+    }
+
+    .philosophy-graphic .node-dark { fill: rgba(17,24,39,0.54); }
+    .philosophy-graphic .node-gold { fill: rgba(245,158,11,0.62); }
+    .philosophy-graphic .node-soft { fill: rgba(100,116,139,0.38); }
+
+    .corner-mark {
+      position: absolute;
+      width: 280px;
+      height: 280px;
+      border-radius: 50%;
+      background:
+        radial-gradient(circle, rgba(6,182,212,0.06) 0%, rgba(217,154,25,0.04) 34%, transparent 70%);
+      right: -125px;
+      top: -125px;
+      filter: blur(18px);
+      z-index: 0;
+    }
+
+    .watermark {
+      position: absolute;
+      inset: 0;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      pointer-events: none;
+      z-index: 1;
+      transform: rotate(-18deg);
+      user-select: none;
+    }
+
+    .watermark svg {
+      width: 48%;
+      height: auto;
+      opacity: 0.028;
+    }
+
+    .content {
+      position: relative;
+      z-index: 12;
+      background: rgba(255,255,255,0.86);
+      padding: 5mm;
+      border-radius: 8px;
+      backdrop-filter: blur(2px);
+      border: 1px solid rgba(17,24,39,0.08);
+      box-shadow:
+        0 8px 24px rgba(15,23,42,0.045),
+        inset 0 1px 0 rgba(255,255,255,0.95);
+    }
+
+    header {
+      display: grid;
+      grid-template-columns: auto 1fr;
+      gap: 24px;
+      align-items: center;
+      padding-bottom: 18px;
+      border-bottom: 1px solid rgba(148,163,184,0.22);
+      position: relative;
+    }
+
+    header::after {
+      content: "";
+      position: absolute;
+      left: 0;
+      bottom: -1px;
+      width: 175px;
+      height: 2px;
+      background: linear-gradient(90deg, var(--gold), rgba(6,182,212,0.85), transparent);
+      border-radius: 999px;
+    }
+
+    .brand {
+      display: flex;
+      align-items: center;
+    }
+
+    .logo-box {
+      width: 112px;
+      height: 112px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: visible;
+      background: transparent;
+      cursor: pointer;
+      padding: 0;
+    }
+
+    .logo-box img {
+      width: 100%;
+      height: 100%;
+      object-fit: contain;
+      object-position: center;
+      pointer-events: none;
+    }
+
+    .logo-placeholder {
+      font-size: 12px;
+      text-align: center;
+      color: var(--muted);
+      line-height: 1.3;
+      padding: 8px;
+      pointer-events: none;
+    }
+
+    .org-info {
+      text-align: right;
+      font-size: 12px;
+      line-height: 1.58;
+      color: var(--muted);
+      max-width: 430px;
+      justify-self: end;
+    }
+
+    .org-info strong {
+      display: block;
+      color: var(--charcoal);
+      font-size: 24px;
+      line-height: 1;
+      letter-spacing: 0.8px;
+      margin-bottom: 5px;
+      font-weight: 850;
+    }
+
+    .org-tagline {
+      display: block;
+      color: #9a6510;
+      font-size: 9.4px;
+      font-weight: 800;
+      letter-spacing: 0.45px;
+      line-height: 1.45;
+      text-transform: none;
+      margin-bottom: 8px;
+    }
+
+    .meta-row {
+      margin-top: 14px;
+      display: flex;
+      justify-content: space-between;
+      gap: 24px;
+      font-size: 13px;
+      color: var(--text);
+    }
+
+    .meta-row strong { color: var(--ink); }
+
+    .certificate-title {
+      text-align: center;
+      margin: 24px 0 16px;
+    }
+
+    .certificate-title h2 {
+      margin: 0;
+      font-size: 24px;
+      text-transform: uppercase;
+      letter-spacing: 2px;
+      color: var(--charcoal);
+      font-weight: 850;
+    }
+
+    .title-line {
+      width: 96px;
+      height: 2.5px;
+      background: linear-gradient(90deg, var(--navy), var(--gold), var(--cyan));
+      margin: 11px auto 0;
+      border-radius: 99px;
+    }
+
+    .letter-body {
+      font-size: 13px;
+      line-height: 1.68;
+      text-align: justify;
+      color: var(--text);
+    }
+
+    .letter-body p {
+      margin: 0 0 6px;
+    }
+
+    .synced-name {
+      color: var(--charcoal);
+      font-weight: 800;
+      background: rgba(6,182,212,0.06);
+      padding: 0 2px;
+      border-radius: 3px;
+    }
+
+    .skills-card {
+      margin: 8px 0 8px;
+      padding: 16px 20px;
+      background: rgba(255,255,255,0.74);
+      border: 1px solid rgba(17,24,39,0.08);
+      border-left: 3px solid rgba(217,154,25,0.76);
+      border-radius: 8px;
+    }
+
+    .skills-card h3 {
+      margin: 0 0 9px;
+      font-size: 13.5px;
+      letter-spacing: 0.8px;
+      text-transform: uppercase;
+      color: var(--charcoal);
+    }
+
+    .skills-card ul {
+      margin: 0;
+      padding-left: 18px;
+      columns: 2;
+      column-gap: 30px;
+      font-size: 12px;
+      line-height: 1.58;
+    }
+
+    .verification {
+      margin-top: 12px;
+      padding: 14px 16px;
+      border: 1px solid rgba(17,24,39,0.10);
+      border-left: 3px solid rgba(217,154,25,0.76);
+      border-radius: 8px;
+      background: rgba(255,255,255,0.74);
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .signature-area {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 36px;
+      margin-top: 16px;
+    }
+
+    .signature-upload {
+      height: 80px;
+      display: flex;
+      align-items: flex-end;
+      cursor: pointer;
+      color: var(--muted);
+      font-size: 12px;
+    }
+
+    .signature-upload img {
+      max-width: 280px;
+      max-height: 80px;
+      object-fit: contain;
+      pointer-events: none;
+    }
+
+    .signature-line {
+      border-top: 1.3px solid var(--ink);
+      padding-top: 8px;
+      font-size: 12px;
+      color: var(--text);
+    }
+
+    .signature-line strong {
+      display: block;
+      font-size: 13px;
+      color: var(--ink);
+      margin-bottom: 2px;
+    }
+
+    footer {
+      position: absolute;
+      left: 18mm;
+      right: 18mm;
+      bottom: 10mm;
+      padding-top: 8px;
+      display: flex;
+      justify-content: space-between;
+      gap: 18px;
+      font-size: 10.5px;
+      color: var(--muted);
+      z-index: 10;
+    }
+
+    [contenteditable="true"] {
+      outline: 1px dashed transparent;
+      border-radius: 4px;
+      transition: 0.15s;
+      min-width: 8px;
+    }
+
+    [contenteditable="true"]:hover {
+      outline-color: rgba(6,182,212,0.45);
+      background: rgba(6,182,212,0.08);
+    }
+
+    [contenteditable="true"]:focus {
+      outline: 2px solid rgba(6,182,212,0.55);
+      background: rgba(6,182,212,0.06);
+    }
+
+    .hint {
+      position: fixed;
+      right: 22px;
+      bottom: 22px;
+      background: var(--charcoal);
+      color: white;
+      padding: 12px 14px;
+      border-radius: 10px;
+      box-shadow: 0 12px 30px rgba(0,0,0,0.2);
+      font-size: 12px;
+      display: none;
+      z-index: 100;
+    }
+
+    @page { size: A4; margin: 0; }
+
+    @media print {
+      body { background: white; }
+      .editor-bar { display: none; }
+      .workspace { padding: 0; overflow: visible; }
+      .page {
+        margin: 0;
+        box-shadow: none;
+        border-radius: 0;
+        width: 210mm;
+        height: 297mm;
+      }
+
+      .selected-edit-element,
+      [contenteditable="true"],
+      [contenteditable="true"]:hover,
+      [contenteditable="true"]:focus {
+        outline: none !important;
+        box-shadow: none !important;
+        background-color: transparent;
+      }
+
+      .synced-name {
+        background: transparent;
+        padding: 0;
+      }
+
+      .philosophy-graphic circle {
+        stroke: none !important;
+        outline: none !important;
+      }
+    }
+  </style>
+</head>
+<body>
+  <div class="editor-bar">
+    <div class="editor-title">
+      <strong>HexagonLab Certificate Editor</strong>
+      <span>Click text to edit. Fill one name once and every matching field updates automatically.</span>
+    </div>
+    <div class="actions">
+      <label class="color-tool">
+        Text
+        <input type="color" id="textColorPicker" value="#111827" onchange="applyTextColor(this.value)">
+      </label>
+      <label class="color-tool">
+        Background
+        <input type="color" id="bgColorPicker" value="#ffffff" onchange="applyBackgroundColor(this.value)">
+      </label>
+      <label class="color-tool">
+        Border
+        <input type="color" id="borderColorPicker" value="#06b6d4" onchange="applyBorderColor(this.value)">
+      </label>
+      <button class="btn-dark" onclick="resetElementColor()">Reset Color</button>
+      <button class="btn-dark" onclick="saveDraft()">Save Draft</button>
+      <button class="btn-dark" onclick="loadDraft()">Load Draft</button>
+      <button class="btn-gold" onclick="window.print()">Print / Save PDF</button>
+    </div>
+  </div>
+
+  <div class="workspace">
+    <section class="page" id="certificatePage">
+      <div class="philosophy-graphic" aria-hidden="true">
+        <svg viewBox="0 0 1000 1414" preserveAspectRatio="none" xmlns="http://www.w3.org/2000/svg">
+          <defs>
+            <linearGradient id="eliteGold" x1="0" x2="1" y1="0" y2="1">
+              <stop offset="0" stop-color="#F59E0B" stop-opacity="0.18" />
+              <stop offset="0.5" stop-color="#D99A19" stop-opacity="0.38" />
+              <stop offset="1" stop-color="#0F172A" stop-opacity="0.13" />
+            </linearGradient>
+          </defs>
+
+          <g opacity="0.78">
+            <path class="fine gold" d="M92 90 L908 90" />
+            <path class="fine" d="M92 1324 L908 1324" />
+            <path class="fine" d="M92 90 L92 1324" />
+            <path class="fine gold" d="M908 90 L908 1324" />
+            <path class="fine gold" d="M128 132 L872 132" />
+            <path class="fine" d="M128 1282 L872 1282" />
+          </g>
+
+          <g opacity="0.50" transform="translate(500 720)">
+            <path class="premium-hex" d="M0 -272 L236 -136 L236 136 L0 272 L-236 136 L-236 -136 Z" />
+            <path class="premium-hex" d="M0 -214 L185 -107 L185 107 L0 214 L-185 107 L-185 -107 Z" />
+            <path class="premium-hex" d="M0 -154 L133 -77 L133 77 L0 154 L-133 77 L-133 -77 Z" />
+            <path class="fine gold" d="M-236 -136 L185 107" />
+            <path class="fine" d="M236 -136 L-185 107" />
+            <path class="fine gold" d="M0 -272 L0 214" />
+            <path class="fine" d="M-236 136 L236 136" />
+            <circle class="node-soft" cx="0" cy="-272" r="7" />
+            <circle class="node-soft" cx="236" cy="-136" r="7" />
+            <circle class="node-soft" cx="236" cy="136" r="7" />
+            <circle class="node-soft" cx="0" cy="272" r="7" />
+            <circle class="node-soft" cx="-236" cy="136" r="7" />
+            <circle class="node-soft" cx="-236" cy="-136" r="7" />
+          </g>
+
+          <g opacity="0.62">
+            <path class="hex-line" d="M98 188 L198 126 L300 188 L300 312 L198 374 L98 312 Z" />
+            <path class="node-link dark" d="M124 236 L176 204 L232 154" />
+            <path class="node-link dark" d="M278 198 L336 250 L374 326" />
+            <path class="node-link gold" d="M182 326 L250 364 L316 374" />
+            <path class="node-link gold" d="M256 256 L254 326 L292 394" />
+            <circle class="node-gold" cx="86" cy="164" r="18" />
+            <circle class="node-dark" cx="124" cy="236" r="17" />
+            <circle class="node-dark" cx="176" cy="204" r="15" />
+            <circle class="node-dark" cx="232" cy="154" r="17" />
+            <circle class="node-dark" cx="278" cy="198" r="16" />
+            <circle class="node-dark" cx="336" cy="250" r="16" />
+            <circle class="node-gold" cx="374" cy="326" r="17" />
+            <circle class="node-dark" cx="182" cy="326" r="17" />
+            <circle class="node-gold" cx="250" cy="364" r="17" />
+            <circle class="node-gold" cx="256" cy="256" r="17" />
+            <circle class="node-gold" cx="254" cy="326" r="16" />
+            <circle class="node-gold" cx="292" cy="394" r="16" />
+          </g>
+
+          <g opacity="0.42" transform="translate(650 178) scale(0.72)">
+            <path class="hex-line" d="M98 188 L198 126 L300 188 L300 312 L198 374 L98 312 Z" />
+            <path class="node-link dark" d="M124 236 L176 204 L232 154" />
+            <path class="node-link dark" d="M278 198 L336 250 L374 326" />
+            <path class="node-link gold" d="M182 326 L250 364 L316 374" />
+            <path class="node-link gold" d="M256 256 L254 326 L292 394" />
+            <circle class="node-gold" cx="86" cy="164" r="18" />
+            <circle class="node-dark" cx="124" cy="236" r="17" />
+            <circle class="node-dark" cx="176" cy="204" r="15" />
+            <circle class="node-dark" cx="232" cy="154" r="17" />
+            <circle class="node-dark" cx="278" cy="198" r="16" />
+            <circle class="node-dark" cx="336" cy="250" r="16" />
+            <circle class="node-gold" cx="374" cy="326" r="17" />
+            <circle class="node-dark" cx="182" cy="326" r="17" />
+            <circle class="node-gold" cx="250" cy="364" r="17" />
+            <circle class="node-gold" cx="256" cy="256" r="17" />
+            <circle class="node-gold" cx="254" cy="326" r="16" />
+            <circle class="node-gold" cx="292" cy="394" r="16" />
+          </g>
+
+          <g opacity="0.50" transform="translate(628 970) scale(0.86)">
+            <path class="hex-line" d="M98 188 L198 126 L300 188 L300 312 L198 374 L98 312 Z" />
+            <path class="node-link dark" d="M124 236 L176 204 L232 154" />
+            <path class="node-link dark" d="M278 198 L336 250 L374 326" />
+            <path class="node-link gold" d="M182 326 L250 364 L316 374" />
+            <path class="node-link gold" d="M256 256 L254 326 L292 394" />
+            <circle class="node-gold" cx="86" cy="164" r="18" />
+            <circle class="node-dark" cx="124" cy="236" r="17" />
+            <circle class="node-dark" cx="176" cy="204" r="15" />
+            <circle class="node-dark" cx="232" cy="154" r="17" />
+            <circle class="node-dark" cx="278" cy="198" r="16" />
+            <circle class="node-dark" cx="336" cy="250" r="16" />
+            <circle class="node-gold" cx="374" cy="326" r="17" />
+            <circle class="node-dark" cx="182" cy="326" r="17" />
+            <circle class="node-gold" cx="250" cy="364" r="17" />
+            <circle class="node-gold" cx="256" cy="256" r="17" />
+            <circle class="node-gold" cx="254" cy="326" r="16" />
+            <circle class="node-gold" cx="292" cy="394" r="16" />
+          </g>
+
+          <g opacity="0.34" transform="translate(72 1040) scale(0.62)">
+            <path class="hex-line" d="M98 188 L198 126 L300 188 L300 312 L198 374 L98 312 Z" />
+            <path class="node-link dark" d="M124 236 L176 204 L232 154" />
+            <path class="node-link dark" d="M278 198 L336 250 L374 326" />
+            <path class="node-link gold" d="M182 326 L250 364 L316 374" />
+            <path class="node-link gold" d="M256 256 L254 326 L292 394" />
+            <circle class="node-gold" cx="86" cy="164" r="18" />
+            <circle class="node-dark" cx="124" cy="236" r="17" />
+            <circle class="node-dark" cx="176" cy="204" r="15" />
+            <circle class="node-dark" cx="232" cy="154" r="17" />
+            <circle class="node-dark" cx="278" cy="198" r="16" />
+            <circle class="node-dark" cx="336" cy="250" r="16" />
+            <circle class="node-gold" cx="374" cy="326" r="17" />
+            <circle class="node-dark" cx="182" cy="326" r="17" />
+            <circle class="node-gold" cx="250" cy="364" r="17" />
+            <circle class="node-gold" cx="256" cy="256" r="17" />
+            <circle class="node-gold" cx="254" cy="326" r="16" />
+            <circle class="node-gold" cx="292" cy="394" r="16" />
+          </g>
+        </svg>
+      </div>
+      <div class="corner-mark"></div>
+      <div class="watermark">
+        <svg width="620" height="620" viewBox="0 0 620 620" fill="none" xmlns="http://www.w3.org/2000/svg">
+          <path d="M245 245 Q275 227 305 210 Q332 232 360 255 Q375 300 375 305 Q340 330 340 360 Q270 345 270 330 Q215 310 215 300 Q230 272 245 245Z" stroke="#0F172A" stroke-width="1" fill="none" stroke-linecap="round"/>
+          <circle cx="245" cy="245" r="5" fill="#0F172A" stroke="none"/>
+          <circle cx="305" cy="210" r="5" fill="#D99A19" stroke="none"/>
+          <circle cx="360" cy="255" r="5" fill="#0F172A" stroke="none"/>
+          <circle cx="375" cy="305" r="5" fill="#D99A19" stroke="none"/>
+          <circle cx="340" cy="360" r="5" fill="#0F172A" stroke="none"/>
+          <circle cx="270" cy="330" r="5" fill="#D99A19" stroke="none"/>
+          <circle cx="215" cy="300" r="5" fill="#0F172A" stroke="none"/>
+        </svg>
+      </div>
+
+      <div class="content">
+        <header>
+          <div class="brand">
+            <div class="logo-box" id="logoBox" onclick="uploadImage('logoBox')">
+              <img src="/img/icons/hexagonlab.jpg" alt="HexagonLab Logo" onerror="this.remove(); document.getElementById('logoBox').insertAdjacentHTML('beforeend','<span class=&quot;logo-placeholder&quot;>Click to upload<br>HexagonLab logo</span>')">
+            </div>
+          </div>
+
+          <div class="org-info">
+            <strong contenteditable="true">HEXAGON LAB</strong>
+            <span class="org-tagline" contenteditable="true">Where Every Angle Epitomizes Ingenuity and Resilience</span>
+            Website: <span contenteditable="true">hexagonlabo.org</span><br>
+            Email: <span contenteditable="true">hexagonlab24@gmail.com</span>
+          </div>
+        </header>
+
+        <div class="meta-row">
+          <div><strong>Reference No:</strong> <span contenteditable="true">HL-EXP-011501093025</span></div>
+          <div><strong>Date of Issue:</strong> <span contenteditable="true">06 May 2026</span></div>
+        </div>
+
+        <div class="certificate-title">
+          <h2 contenteditable="true">Experience Certificate</h2>
+          <div class="title-line"></div>
+        </div>
+
+        <main class="letter-body">
+          <p>
+            This is to formally certify that <strong class="synced-name" data-sync-field="employeeName" contenteditable="true">[Employee Name]</strong> served as a <strong contenteditable="true">Contributor</strong> at <strong contenteditable="true">HexagonLab</strong> and actively contributed to projects and operational activities under <strong contenteditable="true">Digital Radio Bangla</strong> from <strong contenteditable="true">01 January 2025</strong> to <strong contenteditable="true">30 September 2025</strong>.
+          </p>
+
+          <p contenteditable="true">
+            During his tenure with the organization, he participated in collaborative media, operational, and technology-oriented workflows. He demonstrated professionalism, responsibility, adaptability, and a strong commitment toward continuous learning and execution excellence.
+          </p>
+
+          <div class="skills-card">
+            <h3 contenteditable="true">Areas of Exposure and Practical Development</h3>
+            <ul contenteditable="true">
+              <li>Leadership and collaborative teamwork</li>
+              <li>Team coordination and execution management</li>
+              <li>Critical thinking and structured problem-solving</li>
+              <li>Professional communication and workplace conduct</li>
+              <li>Formal email communication and documentation</li>
+              <li>Creative planning and digital media workflows</li>
+              <li>Video editing and visual content production</li>
+              <li>Voice editing and audio processing workflows</li>
+              <li>Digital platform and software operations</li>
+              <li>Introductory software development practices</li>
+              <li>Technical support activities</li>
+              <li>Time management, accountability, and discipline</li>
+            </ul>
+          </div>
+
+          <p>
+            <strong class="synced-name" data-sync-field="employeeName" contenteditable="true">[Employee Name]</strong> consistently maintained a positive professional attitude and showed the ability to work effectively within team-based environments while contributing responsibly to assigned activities and organizational objectives.
+          </p>
+
+          <p contenteditable="true">
+            Based on his overall performance, conduct, dedication, and contribution during his period of involvement, HexagonLab acknowledges him as a sincere, capable, and promising individual with strong potential for future professional and academic growth.
+          </p>
+
+          <p contenteditable="true">
+            We sincerely appreciate his contributions to HexagonLab and Digital Radio Bangla and extend our best wishes for his continued success in all future endeavors.
+          </p>
+        </main>
+
+        <div class="signature-area">
+          <div>
+            <div class="signature-upload" id="leftSignature" onclick="uploadImage('leftSignature')">
+              <img src="../../img/signature/anushasignature.png" alt="Anusha Rowshon Puspita signature">
+            </div>
+            <div class="signature-line">
+              <strong contenteditable="true">Anusha Rowshon Puspita</strong>
+              <span contenteditable="true">Chief Operations Officer</span><br>
+              <span contenteditable="true">HexagonLab</span>
+            </div>
+          </div>
+
+          <div>
+            <div class="signature-upload" id="rightSignature" onclick="uploadImage('rightSignature')">
+              <img src="../../img/signature/signaturenahid.png" alt="MD Imtiaz Ahmed Nahid signature">
+            </div>
+            <div class="signature-line">
+              <strong contenteditable="true">MD Imtiaz Ahmed Nahid</strong>
+              <span contenteditable="true">Founder & Research Lead</span><br>
+              <span contenteditable="true">HexagonLab</span>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <footer>
+        <span contenteditable="true">Official Document of HexagonLab</span>
+        <span contenteditable="true">Verify before acceptance: https://hexagonlabo.org/hr/certificates/verify</span>
+      </footer>
+    </section>
+  </div>
+
+  <div class="hint" id="hint">Saved successfully</div>
+
+  <script>
+    let selectedElement = null;
+    let isSyncing = false;
+
+    function setSelectedElement(element) {
+      if (!element || element.closest('.editor-bar')) return;
+      if (selectedElement) selectedElement.classList.remove('selected-edit-element');
+      selectedElement = element;
+      selectedElement.classList.add('selected-edit-element');
+    }
+
+    function applyTextColor(color) {
+      if (!selectedElement) {
+        showHint('Click an element first, then choose color');
+        return;
+      }
+      selectedElement.style.color = color;
+    }
+
+    function applyBackgroundColor(color) {
+      if (!selectedElement) {
+        showHint('Click an element first, then choose background');
+        return;
+      }
+      selectedElement.style.background = color;
+    }
+
+    function applyBorderColor(color) {
+      if (!selectedElement) {
+        showHint('Click an element first, then choose border');
+        return;
+      }
+      selectedElement.style.borderColor = color;
+      selectedElement.style.borderLeftColor = color;
+      selectedElement.style.borderTopColor = color;
+      selectedElement.style.borderRightColor = color;
+      selectedElement.style.borderBottomColor = color;
+
+      if (selectedElement.classList.contains('title-line')) {
+        selectedElement.style.background = color;
+      }
+    }
+
+    function resetElementColor() {
+      if (!selectedElement) {
+        showHint('Click an element first');
+        return;
+      }
+      selectedElement.style.color = '';
+      selectedElement.style.background = '';
+      selectedElement.style.borderColor = '';
+      selectedElement.style.borderLeftColor = '';
+      selectedElement.style.borderTopColor = '';
+      selectedElement.style.borderRightColor = '';
+      selectedElement.style.borderBottomColor = '';
+      showHint('Selected element color reset');
+    }
+
+    function bindColorSelection() {
+      document.querySelectorAll('#certificatePage *').forEach((element) => {
+        element.addEventListener('click', function(event) {
+          const uploadZone = event.target.closest('.logo-box, .signature-upload');
+
+          if (uploadZone) {
+            event.stopPropagation();
+            setSelectedElement(uploadZone);
+            return;
+          }
+
+          event.stopPropagation();
+          setSelectedElement(this);
+        });
+      });
+    }
+
+    function uploadImage(targetId) {
+      const input = document.createElement('input');
+      input.type = 'file';
+      input.accept = 'image/*';
+
+      input.onchange = function(event) {
+        const file = event.target.files[0];
+        if (!file) return;
+
+        const reader = new FileReader();
+        reader.onload = function(e) {
+          const target = document.getElementById(targetId);
+          target.innerHTML = '<img src="' + e.target.result + '" alt="Uploaded image">';
+          target.classList.add('image-added');
+          setSelectedElement(target);
+          showHint('Image updated successfully');
+        };
+        reader.readAsDataURL(file);
+      };
+
+      input.click();
+    }
+
+    function showHint(message) {
+      const hint = document.getElementById('hint');
+      hint.textContent = message;
+      hint.style.display = 'block';
+      setTimeout(() => hint.style.display = 'none', 2200);
+    }
+
+    function saveDraft() {
+      const page = document.getElementById('certificatePage').innerHTML;
+      localStorage.setItem('hexagonlab_certificate_draft', page);
+      showHint('Draft saved successfully');
+    }
+
+    function loadDraft() {
+      const saved = localStorage.getItem('hexagonlab_certificate_draft');
+      if (!saved) {
+        showHint('No saved draft found');
+        return;
+      }
+      document.getElementById('certificatePage').innerHTML = saved;
+      selectedElement = null;
+      bindColorSelection();
+      bindSyncedFields();
+      showHint('Draft loaded successfully');
+    }
+
+    function normalizeSyncedText(text) {
+      const normalized = text.replace(/\s+/g, ' ').trim();
+      return normalized || '[Employee Name]';
+    }
+
+    function placeCaretAtEnd(element) {
+      const range = document.createRange();
+      const selection = window.getSelection();
+      range.selectNodeContents(element);
+      range.collapse(false);
+      selection.removeAllRanges();
+      selection.addRange(range);
+    }
+
+    function updateSyncedFields(fieldName, value, sourceElement) {
+      if (isSyncing) return;
+      isSyncing = true;
+
+      document.querySelectorAll('[data-sync-field="' + fieldName + '"]').forEach((element) => {
+        if (element !== sourceElement && element.textContent !== value) {
+          element.textContent = value;
+        }
+      });
+
+      isSyncing = false;
+    }
+
+    function bindSyncedFields() {
+      document.querySelectorAll('[data-sync-field]').forEach((element) => {
+        element.addEventListener('input', function() {
+          const value = normalizeSyncedText(this.textContent);
+          updateSyncedFields(this.dataset.syncField, value, this);
+        });
+
+        element.addEventListener('blur', function() {
+          const value = normalizeSyncedText(this.textContent);
+          this.textContent = value;
+          updateSyncedFields(this.dataset.syncField, value, this);
+        });
+
+        element.addEventListener('keydown', function(event) {
+          if (event.key === 'Enter') {
+            event.preventDefault();
+            this.blur();
+          }
+        });
+
+        element.addEventListener('paste', function(event) {
+          event.preventDefault();
+          const text = (event.clipboardData || window.clipboardData).getData('text');
+          document.execCommand('insertText', false, text);
+          placeCaretAtEnd(this);
+        });
+      });
+    }
+
+    window.addEventListener('beforeprint', function() {
+      if (selectedElement) selectedElement.classList.remove('selected-edit-element');
+    });
+
+    document.addEventListener('DOMContentLoaded', function() {
+      bindColorSelection();
+      bindSyncedFields();
+    });
+  </script>
+</body>
+</html>

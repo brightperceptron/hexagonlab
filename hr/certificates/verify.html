@@ -1,191 +1,334 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Verify Certificate - HexagonLab</title>
-    <link rel="icon" href="../../img/teams/hexagonlab.svg">
-    <meta name="description" content="Verify the authenticity of certificates issued by HexagonLab.">
-    <link rel="stylesheet" href="../../style.css">
-    <script src="https://cdn.tailwindcss.com"></script>
-    <script src="https://unpkg.com/lucide@latest"></script>
-    <style>
-        .verification-form {
-            max-width: 500px;
-            margin: 0 auto;
-            padding: 2rem;
-            background: var(--surface);
-            border-radius: 12px;
-            box-shadow: var(--shadow);
-        }
-        .result-card {
-            margin-top: 2rem;
-            padding: 1.5rem;
-            border-radius: 8px;
-            display: none;
-        }
-        .valid {
-            background: rgba(34, 197, 94, 0.1);
-            border: 1px solid rgba(34, 197, 94, 0.2);
-        }
-        .invalid {
-            background: rgba(239, 68, 68, 0.1);
-            border: 1px solid rgba(239, 68, 68, 0.2);
-        }
-    </style>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Verify Document - HexagonLab</title>
+  <meta name="description" content="Verify the authenticity of official documents issued by HexagonLab.">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <script src="https://unpkg.com/lucide@latest"></script>
+  <style>
+    :root {
+      --gold: #f59e0b;
+      --ink: #111827;
+      --muted: #667085;
+    }
+
+    body {
+      font-family: "Segoe UI", Arial, sans-serif;
+      background: #f6f7f9;
+      color: var(--ink);
+    }
+
+    .preloader {
+      position: fixed;
+      inset: 0;
+      z-index: 100;
+      display: grid;
+      place-items: center;
+      background: #020617;
+      color: white;
+      transition: opacity 0.35s ease, visibility 0.35s ease;
+    }
+
+    .preloader-hidden {
+      opacity: 0;
+      visibility: hidden;
+    }
+
+    .preloader-ring {
+      width: 54px;
+      height: 54px;
+      border: 3px solid rgba(255,255,255,0.18);
+      border-top-color: var(--gold);
+      border-radius: 999px;
+      animation: spin 0.9s linear infinite;
+      margin: 0 auto 18px;
+    }
+
+    .preloader-copy {
+      text-align: center;
+      display: flex;
+      flex-direction: column;
+      gap: 4px;
+    }
+
+    .preloader-title {
+      font-weight: 800;
+      letter-spacing: 0.4px;
+    }
+
+    .preloader-text {
+      font-size: 13px;
+      color: #cbd5e1;
+    }
+
+    @keyframes spin {
+      to { transform: rotate(360deg); }
+    }
+
+    .verification-form {
+      max-width: 560px;
+      margin: 0 auto;
+      padding: 2rem;
+      background: rgba(255,255,255,0.92);
+      border: 1px solid rgba(17,24,39,0.08);
+      border-radius: 12px;
+      box-shadow: 0 20px 60px rgba(15,23,42,0.10);
+      backdrop-filter: blur(8px);
+    }
+
+    .result-card {
+      margin-top: 2rem;
+      padding: 1.5rem;
+      border-radius: 10px;
+      display: none;
+    }
+
+    .valid {
+      background: rgba(22, 163, 74, 0.09);
+      border: 1px solid rgba(22, 163, 74, 0.22);
+    }
+
+    .invalid {
+      background: rgba(220, 38, 38, 0.08);
+      border: 1px solid rgba(220, 38, 38, 0.22);
+    }
+
+    .detail-grid {
+      display: grid;
+      gap: 10px;
+      font-size: 14px;
+    }
+
+    .detail-row {
+      display: grid;
+      grid-template-columns: 150px 1fr;
+      gap: 12px;
+      padding-bottom: 9px;
+      border-bottom: 1px solid rgba(15,23,42,0.08);
+    }
+
+    .detail-row:last-child {
+      border-bottom: 0;
+      padding-bottom: 0;
+    }
+
+    .detail-label {
+      color: var(--muted);
+      font-weight: 700;
+    }
+
+    .bg-mark {
+      position: absolute;
+      inset: 0;
+      overflow: hidden;
+      pointer-events: none;
+    }
+
+    .bg-mark::before,
+    .bg-mark::after {
+      content: "";
+      position: absolute;
+      border: 18px solid rgba(245,158,11,0.10);
+      width: 260px;
+      height: 260px;
+      transform: rotate(30deg);
+      clip-path: polygon(25% 0,75% 0,100% 50%,75% 100%,25% 100%,0 50%);
+    }
+
+    .bg-mark::before {
+      top: 80px;
+      left: -90px;
+    }
+
+    .bg-mark::after {
+      right: -80px;
+      bottom: 90px;
+      border-color: rgba(15,23,42,0.08);
+    }
+  </style>
 </head>
 <body>
-    <div id="preloader" class="preloader" aria-hidden="false">
-        <div class="preloader-ring" aria-hidden="true"></div>
-        <div class="preloader-copy">
-            <span class="preloader-title">HexagonLab</span>
-            <span class="preloader-text">Verifying Certificate...</span>
-        </div>
+  <div id="preloader" class="preloader" aria-hidden="false">
+    <div>
+      <div class="preloader-ring" aria-hidden="true"></div>
+      <div class="preloader-copy">
+        <span class="preloader-title">HEXAGON LAB</span>
+        <span class="preloader-text">Verifying official document...</span>
+      </div>
     </div>
+  </div>
 
-    <header class="sticky top-0 z-40 bg-white/80 backdrop-blur-md border-b border-gray-200">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="flex justify-between items-center py-4">
-                <div class="flex items-center">
-                    <img src="../../img/teams/hexagonlab.svg" alt="HexagonLab" class="h-8 w-8 mr-2">
-                    <span class="text-xl font-bold text-gray-900">HexagonLab</span>
-                </div>
-                <nav class="hidden md:flex space-x-8">
-                    <a href="../../index.html" class="text-gray-700 hover:text-yellow-600 transition-colors">Home</a>
-                    <a href="#" class="text-gray-700 hover:text-yellow-600 transition-colors">About</a>
-                    <a href="#" class="text-gray-700 hover:text-yellow-600 transition-colors">Services</a>
-                    <a href="#" class="text-gray-700 hover:text-yellow-600 transition-colors">Contact</a>
-                </nav>
-            </div>
+  <header class="sticky top-0 z-40 bg-white/85 backdrop-blur-md border-b border-gray-200">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="flex justify-between items-center py-4">
+        <a href="index.html" class="flex items-center gap-3">
+          <div class="h-9 w-9 rounded-lg bg-gray-950 grid place-items-center text-yellow-500 font-black">H</div>
+          <div>
+            <span class="block text-lg font-black tracking-wide text-gray-900 leading-none">HEXAGON LAB</span>
+            <span class="block text-[10px] text-gray-500 mt-1">Document Verification</span>
+          </div>
+        </a>
+        <nav class="hidden md:flex space-x-8 text-sm font-medium">
+          <a href="index.html" class="text-gray-700 hover:text-yellow-600 transition-colors">Certificate Editor</a>
+          <a href="#" class="text-gray-700 hover:text-yellow-600 transition-colors">About</a>
+          <a href="#" class="text-gray-700 hover:text-yellow-600 transition-colors">Contact</a>
+        </nav>
+      </div>
+    </div>
+  </header>
+
+  <main class="relative min-h-screen bg-gradient-to-br from-gray-50 via-white to-gray-100 py-12">
+    <div class="bg-mark"></div>
+    <div class="relative max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
+      <div class="text-center mb-8">
+        <p class="text-xs font-black uppercase tracking-[0.22em] text-yellow-600 mb-3">Official Document Registry</p>
+        <h1 class="text-3xl sm:text-4xl font-black text-gray-950 mb-4">Document Verification</h1>
+        <p class="text-base sm:text-lg text-gray-600">Enter the document reference number to verify authenticity and issue details.</p>
+      </div>
+
+      <div class="verification-form">
+        <form id="verificationForm">
+          <div class="mb-6">
+            <label for="verificationCode" class="block text-sm font-bold text-gray-700 mb-2">
+              Document Reference Number
+            </label>
+            <input
+              type="text"
+              id="verificationCode"
+              name="verificationCode"
+              required
+              placeholder="Example: HL-EXP-011501093025"
+              class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-colors uppercase"
+            >
+          </div>
+          <button
+            type="submit"
+            class="w-full bg-gray-950 hover:bg-gray-800 text-white font-bold py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
+          >
+            <i data-lucide="search-check" class="w-5 h-5 mr-2"></i>
+            Verify Document
+          </button>
+        </form>
+
+        <div id="resultCard" class="result-card">
+          <div class="flex items-center mb-4">
+            <i id="resultIcon" data-lucide="badge-check" class="w-6 h-6 mr-2"></i>
+            <h3 id="resultTitle" class="text-lg font-black">Document Verified</h3>
+          </div>
+          <div id="resultDetails" class="text-gray-700"></div>
         </div>
-    </header>
+      </div>
+    </div>
+  </main>
 
-    <main class="min-h-screen bg-gradient-to-br from-gray-50 to-gray-100 py-12">
-        <div class="max-w-4xl mx-auto px-4 sm:px-6 lg:px-8">
-            <div class="text-center mb-8">
-                <h1 class="text-4xl font-bold text-gray-900 mb-4">Certificate Verification</h1>
-                <p class="text-lg text-gray-600">Enter your certificate verification code to check its authenticity</p>
-            </div>
+  <footer class="bg-gray-950 text-white py-8">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
+      <p class="text-sm text-gray-300">&copy; 2026 HexagonLab. All rights reserved.</p>
+    </div>
+  </footer>
 
-            <div class="verification-form">
-                <form id="verificationForm">
-                    <div class="mb-6">
-                        <label for="verificationCode" class="block text-sm font-medium text-gray-700 mb-2">
-                            Verification Code
-                        </label>
-                        <input
-                            type="text"
-                            id="verificationCode"
-                            name="verificationCode"
-                            required
-                            placeholder="Enter your verification code"
-                            class="w-full px-4 py-3 border border-gray-300 rounded-lg focus:ring-2 focus:ring-yellow-500 focus:border-transparent transition-colors"
-                        >
-                    </div>
-                    <button
-                        type="submit"
-                        class="w-full bg-yellow-500 hover:bg-yellow-600 text-white font-semibold py-3 px-6 rounded-lg transition-colors flex items-center justify-center"
-                    >
-                        <i data-lucide="search" class="w-5 h-5 mr-2"></i>
-                        Verify Certificate
-                    </button>
-                </form>
+  <script>
+    const documents = {
+      'HL-EXP-011501093025': {
+        valid: true,
+        details: {
+          referenceNumber: 'HL-EXP-011501093025',
+          documentType: 'Experience Certificate',
+          documentHolder: 'MOHAMMAD TAHZIBUL ISLAM TAMIM',
+          organization: 'HexagonLab / Digital Radio Bangla',
+          issueDate: '06 May 2026',
+          coveredPeriod: '01 January 2025 to 30 September 2025',
+          signatories: 'Anusha Rowshon Puspita; MD Imtiaz Ahmed Nahid',
+          status: 'Authentic and active'
+        }
+      },
+      'HL-DOC-2026-002': {
+        valid: true,
+        details: {
+          referenceNumber: 'HL-DOC-2026-002',
+          documentType: 'Official Letter',
+          documentHolder: 'Jane Smith',
+          organization: 'HexagonLab',
+          issueDate: '20 February 2026',
+          coveredPeriod: 'Not applicable',
+          signatories: 'Authorized HexagonLab Representative',
+          status: 'Authentic and active'
+        }
+      },
+      'HL-DOC-2026-003': {
+        valid: false,
+        reason: 'This document reference has been revoked by HexagonLab.'
+      }
+    };
 
-                <div id="resultCard" class="result-card">
-                    <div class="flex items-center mb-4">
-                        <i id="resultIcon" data-lucide="check-circle" class="w-6 h-6 mr-2"></i>
-                        <h3 id="resultTitle" class="text-lg font-semibold">Certificate Verified</h3>
-                    </div>
-                    <div id="resultDetails" class="text-gray-700">
-                        <!-- Certificate details will be populated here -->
-                    </div>
-                </div>
-            </div>
+    function escapeHtml(value) {
+      return String(value)
+        .replaceAll('&', '&amp;')
+        .replaceAll('<', '&lt;')
+        .replaceAll('>', '&gt;')
+        .replaceAll('"', '&quot;')
+        .replaceAll("'", '&#039;');
+    }
+
+    function renderDetails(details) {
+      const rows = [
+        ['Reference No.', details.referenceNumber],
+        ['Document Type', details.documentType],
+        ['Document Holder', details.documentHolder],
+        ['Organization', details.organization],
+        ['Issue Date', details.issueDate],
+        ['Covered Period', details.coveredPeriod],
+        ['Signatories', details.signatories],
+        ['Status', details.status]
+      ];
+
+      return '<div class="detail-grid">' + rows.map(([label, value]) => `
+        <div class="detail-row">
+          <span class="detail-label">${escapeHtml(label)}</span>
+          <span>${escapeHtml(value)}</span>
         </div>
-    </main>
+      `).join('') + '</div>';
+    }
 
-    <footer class="bg-gray-900 text-white py-8">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 text-center">
-            <p>&copy; 2024 HexagonLab. All rights reserved.</p>
-        </div>
-    </footer>
+    document.getElementById('verificationForm').addEventListener('submit', function(e) {
+      e.preventDefault();
+      const code = document.getElementById('verificationCode').value.trim().toUpperCase();
+      const resultCard = document.getElementById('resultCard');
+      const resultIcon = document.getElementById('resultIcon');
+      const resultTitle = document.getElementById('resultTitle');
+      const resultDetails = document.getElementById('resultDetails');
+      const documentRecord = documents[code];
 
-    <script>
-        // Sample certificate data (in a real application, this would come from a backend)
-        const certificates = {
-            'HL-2024-001': {
-                valid: true,
-                details: {
-                    certificateNumber: 'HL-2024-001',
-                    recipient: 'John Doe',
-                    course: 'Advanced AI Development',
-                    issueDate: '2024-01-15',
-                    expiryDate: '2026-01-15'
-                }
-            },
-            'HL-2024-002': {
-                valid: true,
-                details: {
-                    certificateNumber: 'HL-2024-002',
-                    recipient: 'Jane Smith',
-                    course: 'IoT Solutions',
-                    issueDate: '2024-02-20',
-                    expiryDate: '2026-02-20'
-                }
-            },
-            'HL-2024-003': {
-                valid: false,
-                reason: 'Certificate has been revoked'
-            }
-        };
+      if (documentRecord && documentRecord.valid) {
+        resultCard.className = 'result-card valid';
+        resultIcon.setAttribute('data-lucide', 'badge-check');
+        resultTitle.textContent = 'Document Verified';
+        resultDetails.innerHTML = renderDetails(documentRecord.details);
+      } else if (documentRecord && !documentRecord.valid) {
+        resultCard.className = 'result-card invalid';
+        resultIcon.setAttribute('data-lucide', 'x-circle');
+        resultTitle.textContent = 'Document Invalid';
+        resultDetails.innerHTML = `<p>${escapeHtml(documentRecord.reason)}</p>`;
+      } else {
+        resultCard.className = 'result-card invalid';
+        resultIcon.setAttribute('data-lucide', 'search-x');
+        resultTitle.textContent = 'Document Not Found';
+        resultDetails.innerHTML = '<p>The reference number entered does not match any document in our records.</p>';
+      }
 
-        document.getElementById('verificationForm').addEventListener('submit', function(e) {
-            e.preventDefault();
-            const code = document.getElementById('verificationCode').value.trim().toUpperCase();
-            const resultCard = document.getElementById('resultCard');
-            const resultIcon = document.getElementById('resultIcon');
-            const resultTitle = document.getElementById('resultTitle');
-            const resultDetails = document.getElementById('resultDetails');
+      resultCard.style.display = 'block';
+      lucide.createIcons();
+    });
 
-            const cert = certificates[code];
+    window.addEventListener('load', function() {
+      setTimeout(() => {
+        document.getElementById('preloader').classList.add('preloader-hidden');
+      }, 450);
+    });
 
-            if (cert && cert.valid) {
-                resultCard.className = 'result-card valid';
-                resultIcon.setAttribute('data-lucide', 'check-circle');
-                resultTitle.textContent = 'Certificate Verified';
-                resultDetails.innerHTML = `
-                    <p><strong>Certificate Number:</strong> ${cert.details.certificateNumber}</p>
-                    <p><strong>Recipient:</strong> ${cert.details.recipient}</p>
-                    <p><strong>Course:</strong> ${cert.details.course}</p>
-                    <p><strong>Issue Date:</strong> ${cert.details.issueDate}</p>
-                    <p><strong>Expiry Date:</strong> ${cert.details.expiryDate}</p>
-                `;
-            } else if (cert && !cert.valid) {
-                resultCard.className = 'result-card invalid';
-                resultIcon.setAttribute('data-lucide', 'x-circle');
-                resultTitle.textContent = 'Certificate Invalid';
-                resultDetails.innerHTML = `<p>${cert.reason}</p>`;
-            } else {
-                resultCard.className = 'result-card invalid';
-                resultIcon.setAttribute('data-lucide', 'x-circle');
-                resultTitle.textContent = 'Certificate Not Found';
-                resultDetails.innerHTML = '<p>The verification code entered does not match any certificate in our records.</p>';
-            }
-
-            resultCard.style.display = 'block';
-            // Re-initialize Lucide icons for the new content
-            lucide.createIcons();
-        });
-
-        // Preloader
-        window.addEventListener('load', function() {
-            setTimeout(() => {
-                document.getElementById('preloader').classList.add('preloader-hidden');
-            }, 1000);
-        });
-
-        // Initialize Lucide icons
-        lucide.createIcons();
-    </script>
+    lucide.createIcons();
+  </script>
 </body>
 </html>
